@@ -9,25 +9,11 @@ const state = {
   selectedTaskId: null,
   selectedReductionId: null,
   pathReductionIds: new Set(),
-  nodeOffsets: new Map(),
-  nodeDrag: {
-    active: false,
-    taskId: null,
-    startClientX: 0,
-    startClientY: 0,
-    startOffsetX: 0,
-    startOffsetY: 0,
-    moved: false,
-    rafPending: false,
-  },
+  pathTaskIds: new Set(),
   viewport: {
     scale: 1,
-    tx: 0,
-    ty: 0,
-    dragging: false,
-    lastClientX: 0,
-    lastClientY: 0,
-    moved: false,
+    baseWidth: 0,
+    baseHeight: 0,
   },
   query: "",
   sourceId: "",
@@ -46,7 +32,6 @@ const colorByClass = {
 };
 
 const VIEW_W = 1200;
-const VIEW_H = 760;
 const NODE_W = 182;
 const NODE_H = 56;
 const NODE_LINE_HEIGHT = 13;
@@ -59,9 +44,6 @@ const targetSelect = document.getElementById("targetSelect");
 const findPathBtn = document.getElementById("findPathBtn");
 const clearPathBtn = document.getElementById("clearPathBtn");
 const pathResult = document.getElementById("pathResult");
-const zoomInBtn = document.getElementById("zoomInBtn");
-const zoomOutBtn = document.getElementById("zoomOutBtn");
-const resetViewBtn = document.getElementById("resetViewBtn");
 const VIEWPORT_GROUP_ID = "viewport-root";
 
 function qsHash() {
@@ -75,9 +57,6 @@ function setHash() {
   if (state.selectedReductionId) p.set("edge", state.selectedReductionId);
   if (state.sourceId) p.set("src", state.sourceId);
   if (state.targetId) p.set("dst", state.targetId);
-  if (state.viewport.scale !== 1) p.set("zs", String(state.viewport.scale));
-  if (state.viewport.tx !== 0) p.set("zx", String(state.viewport.tx));
-  if (state.viewport.ty !== 0) p.set("zy", String(state.viewport.ty));
   window.location.hash = p.toString();
 }
 
@@ -88,12 +67,7 @@ function loadHash() {
   state.selectedReductionId = p.get("edge") || null;
   state.sourceId = p.get("src") || "";
   state.targetId = p.get("dst") || "";
-  state.viewport.scale = Number.parseFloat(p.get("zs") || "1");
-  state.viewport.tx = Number.parseFloat(p.get("zx") || "0");
-  state.viewport.ty = Number.parseFloat(p.get("zy") || "0");
-  if (!Number.isFinite(state.viewport.scale) || state.viewport.scale <= 0) state.viewport.scale = 1;
-  if (!Number.isFinite(state.viewport.tx)) state.viewport.tx = 0;
-  if (!Number.isFinite(state.viewport.ty)) state.viewport.ty = 0;
+  state.viewport.scale = 1;
 }
 
 function escapeHtml(value) {
@@ -120,7 +94,7 @@ function recalcVisible() {
 }
 
 function taskYear(task) {
-  return Number.isFinite(task.year) ? task.year : 1975;
+  return Number.isFinite(task.year) ? task.year : 0;
 }
 
 function hashString(value) {
@@ -232,9 +206,9 @@ function buildCurvedEdgePath(p1, p2, offset = 0) {
   return { path, x1, y1, x2, y2 };
 }
 
-function yearLayout(visibleTasks, visibleReductions) {
+function graphLayout(visibleTasks, visibleReductions) {
   if (visibleTasks.length === 0) {
-    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: VIEW_H, yearColumns: [] };
+    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: NODE_H + 36, yearBands: [] };
   }
 
   const deg = new Map(visibleTasks.map((t) => [t.id, 0]));
@@ -244,30 +218,33 @@ function yearLayout(visibleTasks, visibleReductions) {
     deg.set(red.to, (deg.get(red.to) || 0) + 1);
   }
 
-  const byYear = new Map();
-  for (const task of visibleTasks) {
-    const y = taskYear(task);
-    if (!byYear.has(y)) byYear.set(y, []);
-    byYear.get(y).push(task);
-  }
-
-  const years = [...byYear.keys()].sort((a, b) => a - b);
   const leftPad = 66;
   const rightPad = 66;
-  const topPad = 76;
-  const bottomPad = 32;
+  const topPad = 44;
   const rowGap = 16;
-  const yearStep = NODE_W + 74;
-  const viewWidth = Math.max(VIEW_W, leftPad + years.length * yearStep + rightPad);
-  const maxYearSize = Math.max(...years.map((year) => byYear.get(year).length));
-  const contentHeight = maxYearSize * NODE_H + Math.max(0, maxYearSize - 1) * rowGap;
-  const viewHeight = Math.max(VIEW_H, topPad + contentHeight + bottomPad);
-  const usableHeight = viewHeight - topPad - bottomPad;
+  const colGap = 26;
+  const yearGap = 92;
+  const maxRows = 14;
+  const rowStep = NODE_H + rowGap;
+  const tasksByYear = new Map();
+  for (const task of visibleTasks) {
+    const year = taskYear(task);
+    if (!tasksByYear.has(year)) tasksByYear.set(year, []);
+    tasksByYear.get(year).push(task);
+  }
+
+  const years = [...tasksByYear.keys()].sort((a, b) => a - b);
+  const maxYearRows = Math.min(
+    maxRows,
+    Math.max(...years.map((year) => tasksByYear.get(year).length)),
+  );
+  const viewHeight = topPad + maxYearRows * rowStep - rowGap;
   const positions = new Map();
-  const yearColumns = [];
-  for (let yi = 0; yi < years.length; yi += 1) {
-    const year = years[yi];
-    const tasks = byYear
+  const yearBands = [];
+  let xCursor = leftPad;
+
+  for (const year of years) {
+    const tasks = tasksByYear
       .get(year)
       .slice()
       .sort((a, b) => {
@@ -276,17 +253,27 @@ function yearLayout(visibleTasks, visibleReductions) {
         if (da !== db) return db - da;
         return a.title.localeCompare(b.title);
       });
-    const x = leftPad + yi * yearStep + NODE_W / 2;
-    const columnHeight = tasks.length * NODE_H + Math.max(0, tasks.length - 1) * rowGap;
-    const startY = topPad + Math.max(0, (usableHeight - columnHeight) / 2) + NODE_H / 2;
+    const yearColumns = Math.ceil(tasks.length / maxRows);
+    const yearWidth = yearColumns * NODE_W + Math.max(0, yearColumns - 1) * colGap;
+    let minX = Infinity;
+    let maxX = -Infinity;
+
     for (let i = 0; i < tasks.length; i += 1) {
-      const y = startY + i * (NODE_H + rowGap);
+      const col = Math.floor(i / maxRows);
+      const row = i % maxRows;
+      const x = xCursor + col * (NODE_W + colGap) + NODE_W / 2;
+      const y = topPad + row * rowStep + NODE_H / 2;
       positions.set(tasks[i].id, { x, y });
+      if (x < minX) minX = x;
+      if (x > maxX) maxX = x;
     }
-    yearColumns.push({ year, x });
+
+    yearBands.push({ year, x: (minX + maxX) / 2, width: maxX - minX + NODE_W });
+    xCursor += yearWidth + yearGap;
   }
 
-  return { positions, viewWidth, viewHeight, yearColumns };
+  const viewWidth = Math.max(VIEW_W, xCursor - yearGap + rightPad);
+  return { positions, viewWidth, viewHeight, yearBands };
 }
 
 function layoutCacheKey(visibleTasks, visibleReductions) {
@@ -295,12 +282,12 @@ function layoutCacheKey(visibleTasks, visibleReductions) {
   return `${taskPart}|${edgePart}`;
 }
 
-function getYearLayoutCached(visibleTasks, visibleReductions) {
+function getGraphLayoutCached(visibleTasks, visibleReductions) {
   const key = layoutCacheKey(visibleTasks, visibleReductions);
   if (state.layoutCache.key === key && state.layoutCache.value) {
     return state.layoutCache.value;
   }
-  const layout = yearLayout(visibleTasks, visibleReductions);
+  const layout = graphLayout(visibleTasks, visibleReductions);
   state.layoutCache = { key, value: layout };
   return layout;
 }
@@ -339,43 +326,13 @@ function buildHighlightSets() {
   return { nodes, edges, active: false };
 }
 
-function getViewMetrics() {
-  const vb = svg.viewBox.baseVal;
-  return {
-    width: vb && vb.width ? vb.width : VIEW_W,
-    height: vb && vb.height ? vb.height : VIEW_H,
-    pxToUnitX: (vb && vb.width ? vb.width : VIEW_W) / Math.max(1, svg.clientWidth),
-    pxToUnitY: (vb && vb.height ? vb.height : VIEW_H) / Math.max(1, svg.clientHeight),
-  };
-}
-
 function applyViewportTransform() {
   const g = document.getElementById(VIEWPORT_GROUP_ID);
   if (!g) return;
-  const { scale, tx, ty } = state.viewport;
-  g.setAttribute("transform", `matrix(${scale} 0 0 ${scale} ${tx} ${ty})`);
-}
-
-function zoomBy(factor) {
-  const oldScale = state.viewport.scale;
-  const newScale = Math.max(0.4, Math.min(3, oldScale * factor));
-  if (newScale === oldScale) return;
-  const metrics = getViewMetrics();
-  const cx = metrics.width / 2;
-  const cy = metrics.height / 2;
-  state.viewport.tx = cx - (newScale * (cx - state.viewport.tx)) / oldScale;
-  state.viewport.ty = cy - (newScale * (cy - state.viewport.ty)) / oldScale;
-  state.viewport.scale = newScale;
-  applyViewportTransform();
-  setHash();
-}
-
-function resetViewport() {
-  state.viewport.scale = 1;
-  state.viewport.tx = 0;
-  state.viewport.ty = 0;
-  applyViewportTransform();
-  setHash();
+  g.setAttribute("transform", "matrix(1 0 0 1 0 0)");
+  const scale = state.viewport.scale;
+  svg.style.width = `${state.viewport.baseWidth * scale}px`;
+  svg.style.height = `${state.viewport.baseHeight * scale}px`;
 }
 
 function drawGraph() {
@@ -386,18 +343,14 @@ function drawGraph() {
     (r) => visibleTaskIds.has(r.from) && visibleTaskIds.has(r.to),
   );
 
-  const { positions: basePos, viewWidth, viewHeight, yearColumns } = getYearLayoutCached(
+  const { positions: basePos, viewWidth, viewHeight, yearBands } = getGraphLayoutCached(
     visibleTasks,
     visibleReductions,
   );
   const pos = new Map(basePos);
-  for (const [taskId, offset] of state.nodeOffsets.entries()) {
-    const base = pos.get(taskId);
-    if (!base || !offset) continue;
-    pos.set(taskId, { x: base.x + offset.dx, y: base.y + offset.dy });
-  }
   svg.setAttribute("viewBox", `0 0 ${viewWidth} ${viewHeight}`);
-  svg.style.height = `${Math.max(680, viewHeight)}px`;
+  state.viewport.baseWidth = viewWidth;
+  state.viewport.baseHeight = viewHeight;
   const highlight = buildHighlightSets();
   const edgeOffsets = buildEdgeBundleOffsets(visibleReductions, pos);
 
@@ -434,23 +387,30 @@ function drawGraph() {
   svg.appendChild(viewportGroup);
 
   const yearsGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  yearsGroup.classList.add("year-guides");
   viewportGroup.appendChild(yearsGroup);
-  for (const column of yearColumns || []) {
-    const guide = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    guide.setAttribute("x1", String(column.x));
-    guide.setAttribute("x2", String(column.x));
-    guide.setAttribute("y1", "8");
-    guide.setAttribute("y2", String(viewHeight - 8));
-    guide.classList.add("year-guide-line");
-    yearsGroup.appendChild(guide);
+  for (const band of yearBands) {
+    const width = Math.max(54, Math.min(88, band.width - 10));
+
+    const pill = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    pill.setAttribute("x", String(band.x - width / 2));
+    pill.setAttribute("y", "8");
+    pill.setAttribute("width", String(width));
+    pill.setAttribute("height", "18");
+    pill.setAttribute("rx", "9");
+    pill.setAttribute("fill", "#f5f8fb");
+    pill.setAttribute("stroke", "#c7d3df");
+    pill.setAttribute("stroke-width", "1");
+    yearsGroup.appendChild(pill);
 
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    label.setAttribute("x", String(column.x));
-    label.setAttribute("y", "20");
+    label.setAttribute("x", String(band.x));
+    label.setAttribute("y", "21");
     label.setAttribute("text-anchor", "middle");
-    label.classList.add("year-guide-label");
-    label.textContent = String(column.year);
+    label.setAttribute("fill", "#304455");
+    label.setAttribute("font-size", "11");
+    label.setAttribute("font-weight", "700");
+    label.setAttribute("font-family", "IBM Plex Sans, Segoe UI, sans-serif");
+    label.textContent = String(band.year);
     yearsGroup.appendChild(label);
   }
 
@@ -499,6 +459,7 @@ function drawGraph() {
     const nodeGradId = nodeGradientByClass.get(task.class);
     rect.setAttribute("fill", nodeGradId ? `url(#${nodeGradId})` : colorByClass[task.class] || "#b0beca");
     rect.classList.add("node-block");
+    if (state.pathTaskIds.has(task.id)) rect.classList.add("path-node");
     if (state.selectedTaskId === task.id) rect.classList.add("selected-node");
     if (highlight.active) {
       if (highlight.nodes.has(task.id)) rect.classList.add("node-highlight");
@@ -536,29 +497,12 @@ function drawGraph() {
 
     group.addEventListener("click", (event) => {
       event.stopPropagation();
-      if (state.nodeDrag.moved) {
-        state.nodeDrag.moved = false;
-        return;
-      }
       clearActivePath();
       state.selectedTaskId = task.id;
       state.selectedReductionId = null;
       renderDetails();
       setHash();
       drawGraph();
-    });
-    group.addEventListener("mousedown", (event) => {
-      if (event.button !== 0) return;
-      event.stopPropagation();
-      const currentOffset = state.nodeOffsets.get(task.id) || { dx: 0, dy: 0 };
-      state.nodeDrag.active = true;
-      state.nodeDrag.taskId = task.id;
-      state.nodeDrag.startClientX = event.clientX;
-      state.nodeDrag.startClientY = event.clientY;
-      state.nodeDrag.startOffsetX = currentOffset.dx;
-      state.nodeDrag.startOffsetY = currentOffset.dy;
-      state.nodeDrag.moved = false;
-      svg.classList.add("dragging-node");
     });
     nodesGroup.appendChild(group);
   }
@@ -672,8 +616,21 @@ function renderPath(pathEdges) {
   pathResult.textContent = rows.join("\n");
 }
 
+function pathTaskIdsFromEdges(pathEdges, sourceId) {
+  if (!sourceId || pathEdges.length === 0) return new Set();
+  const ids = new Set([sourceId]);
+  for (const edgeId of pathEdges) {
+    const red = state.reductionById.get(edgeId);
+    if (!red) continue;
+    ids.add(red.from);
+    ids.add(red.to);
+  }
+  return ids;
+}
+
 function clearActivePath(resetSelectors = true) {
   state.pathReductionIds = new Set();
+  state.pathTaskIds = new Set();
   pathResult.textContent = "";
   if (resetSelectors) {
     state.sourceId = "";
@@ -710,6 +667,7 @@ function wireEvents() {
   findPathBtn.addEventListener("click", () => {
     const path = bfsPath(state.sourceId, state.targetId);
     state.pathReductionIds = new Set(path);
+    state.pathTaskIds = pathTaskIdsFromEdges(path, state.sourceId);
     renderPath(path);
     drawGraph();
     setHash();
@@ -722,10 +680,6 @@ function wireEvents() {
   });
 
   svg.addEventListener("click", () => {
-    if (state.viewport.moved) {
-      state.viewport.moved = false;
-      return;
-    }
     state.selectedTaskId = null;
     state.selectedReductionId = null;
     renderDetails();
@@ -733,68 +687,6 @@ function wireEvents() {
     drawGraph();
   });
 
-  zoomInBtn.addEventListener("click", () => zoomBy(1.15));
-  zoomOutBtn.addEventListener("click", () => zoomBy(1 / 1.15));
-  resetViewBtn.addEventListener("click", () => resetViewport());
-
-  svg.addEventListener("mousedown", (event) => {
-    if (event.button !== 0) return;
-    if (event.target !== svg) return;
-    state.viewport.dragging = true;
-    state.viewport.moved = false;
-    state.viewport.lastClientX = event.clientX;
-    state.viewport.lastClientY = event.clientY;
-    svg.classList.add("dragging");
-  });
-
-  window.addEventListener("mousemove", (event) => {
-    if (state.nodeDrag.active && state.nodeDrag.taskId) {
-      const dxPx = event.clientX - state.nodeDrag.startClientX;
-      const dyPx = event.clientY - state.nodeDrag.startClientY;
-      if (Math.abs(dxPx) + Math.abs(dyPx) > 2) state.nodeDrag.moved = true;
-      const metrics = getViewMetrics();
-      const scale = Math.max(0.0001, state.viewport.scale);
-      const dx = (dxPx * metrics.pxToUnitX) / scale;
-      const dy = (dyPx * metrics.pxToUnitY) / scale;
-      state.nodeOffsets.set(state.nodeDrag.taskId, {
-        dx: state.nodeDrag.startOffsetX + dx,
-        dy: state.nodeDrag.startOffsetY + dy,
-      });
-      if (!state.nodeDrag.rafPending) {
-        state.nodeDrag.rafPending = true;
-        window.requestAnimationFrame(() => {
-          state.nodeDrag.rafPending = false;
-          drawGraph();
-        });
-      }
-      return;
-    }
-
-    if (!state.viewport.dragging) return;
-    const dxPx = event.clientX - state.viewport.lastClientX;
-    const dyPx = event.clientY - state.viewport.lastClientY;
-    if (Math.abs(dxPx) + Math.abs(dyPx) > 2) state.viewport.moved = true;
-    const metrics = getViewMetrics();
-    state.viewport.tx += dxPx * metrics.pxToUnitX;
-    state.viewport.ty += dyPx * metrics.pxToUnitY;
-    state.viewport.lastClientX = event.clientX;
-    state.viewport.lastClientY = event.clientY;
-    applyViewportTransform();
-  });
-
-  window.addEventListener("mouseup", () => {
-    if (state.nodeDrag.active) {
-      state.nodeDrag.active = false;
-      state.nodeDrag.taskId = null;
-      state.nodeDrag.rafPending = false;
-      svg.classList.remove("dragging-node");
-      if (state.nodeDrag.moved) setHash();
-    }
-    if (!state.viewport.dragging) return;
-    state.viewport.dragging = false;
-    svg.classList.remove("dragging");
-    if (state.viewport.moved) setHash();
-  });
 }
 
 async function loadData() {
@@ -844,6 +736,7 @@ async function main() {
   if (state.sourceId && state.targetId) {
     const path = bfsPath(state.sourceId, state.targetId);
     state.pathReductionIds = new Set(path);
+    state.pathTaskIds = pathTaskIdsFromEdges(path, state.sourceId);
     renderPath(path);
     drawGraph();
   }
