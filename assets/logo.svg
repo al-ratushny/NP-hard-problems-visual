@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="line" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#6366F1"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" fill="#FFFFFF"/>
+
+  <path d="M132 150 L256 106 L380 150 L380 312 L256 406 L132 312 Z"
+        stroke="#CBD5E1" stroke-width="8" fill="none" stroke-linejoin="round"/>
+
+  <path d="M132 150 L256 246 L380 150" stroke="url(#line)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M132 312 L256 246 L380 312" stroke="url(#line)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M256 106 L256 406" stroke="url(#line)" stroke-width="9" stroke-linecap="round" opacity="0.75"/>
+
+  <circle cx="132" cy="150" r="14" fill="#0EA5E9"/>
+  <circle cx="256" cy="106" r="14" fill="#2563EB"/>
+  <circle cx="380" cy="150" r="14" fill="#6366F1"/>
+  <circle cx="132" cy="312" r="14" fill="#14B8A6"/>
+  <circle cx="256" cy="246" r="16" fill="#111827"/>
+  <circle cx="380" cy="312" r="14" fill="#8B5CF6"/>
+  <circle cx="256" cy="406" r="14" fill="#334155"/>
+
+  <text x="256" y="476" text-anchor="middle" fill="#334155"
+        font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Arial, sans-serif"
+        font-size="34" font-weight="700">NP Visualizer</text>
+</svg>

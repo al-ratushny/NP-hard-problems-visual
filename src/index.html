@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NP-Completeness Visualizer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <img src="../assets/logo.svg" alt="NP Visualizer logo" class="site-logo" />
+      <h1>NP-Completeness Visualizer</h1>
+    </header>
+
+    <main class="layout">
+      <section class="left-panel">
+        <h2>Search</h2>
+        <div class="search-wrap search-left">
+          <input id="searchInput" type="text" placeholder="Search by id, title, alias..." />
+        </div>
+
+        <h2>Path Explorer</h2>
+        <div class="path-controls">
+          <label>
+            Source
+            <select id="sourceSelect"></select>
+          </label>
+          <label>
+            Target
+            <select id="targetSelect"></select>
+          </label>
+          <button id="findPathBtn">Find Path</button>
+          <button id="clearPathBtn" class="secondary">Clear Path</button>
+        </div>
+        <div id="pathResult" class="path-result"></div>
+
+        <h2>Details</h2>
+        <div id="detailsPanel" class="details-panel">
+          <p>Select a node or edge.</p>
+        </div>
+      </section>
+
+      <section class="graph-panel">
+        <div class="graph-toolbar">
+          <button id="zoomInBtn" type="button">+</button>
+          <button id="zoomOutBtn" type="button">-</button>
+          <button id="resetViewBtn" type="button">Reset</button>
+        </div>
+        <svg id="graphSvg" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
+      </section>
+    </main>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

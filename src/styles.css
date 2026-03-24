@@ -1,0 +1,239 @@
+:root {
+  --bg: #f4f6f8;
+  --panel: #ffffff;
+  --ink: #1d2733;
+  --muted: #6a7887;
+  --accent: #0c7c59;
+  --line: #d8e0e7;
+  --selected: #c0392b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #eef4f8 0%, #f9fbfd 100%);
+  color: var(--ink);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.site-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.search-wrap {
+  min-width: 300px;
+}
+
+.search-left {
+  min-width: 0;
+  margin-bottom: 14px;
+}
+
+.search-wrap input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 12px;
+  padding: 12px;
+  min-height: calc(100vh - 64px);
+}
+
+.left-panel,
+.graph-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.graph-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.graph-toolbar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  display: flex;
+  gap: 6px;
+}
+
+.graph-toolbar button {
+  border: 1px solid #cdd6df;
+  background: #fff;
+  color: #1d2733;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.filters label {
+  display: block;
+  margin: 6px 0;
+  color: var(--muted);
+}
+
+.path-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.path-controls select,
+.path-controls button {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.path-controls button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.path-controls button.secondary {
+  background: #5e6b78;
+}
+
+.path-result {
+  margin-top: 10px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+#graphSvg {
+  width: 100%;
+  height: 100%;
+  min-height: 680px;
+  border-radius: 8px;
+  background: #fbfdff;
+  cursor: grab;
+  user-select: none;
+}
+
+#graphSvg.dragging {
+  cursor: grabbing;
+}
+
+.node-block {
+  cursor: pointer;
+  stroke: #213140;
+  stroke-width: 1;
+  transition: stroke-width 150ms ease, stroke 150ms ease, opacity 150ms ease;
+}
+
+.node-title {
+  font-size: 10px;
+  font-weight: 600;
+  fill: #102030;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.edge {
+  stroke: #a2b1bf;
+  stroke-width: 1.2;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.edge.path-edge {
+  stroke: #1f78b4;
+  stroke-width: 2.8;
+  opacity: 1;
+}
+
+.edge.selected-edge {
+  stroke: var(--selected);
+  stroke-width: 3;
+  opacity: 1;
+}
+
+.edge-highlight {
+  stroke-width: 2.2;
+  opacity: 1;
+}
+
+.edge-dim {
+  opacity: 0.16;
+}
+
+.node-block.selected-node {
+  stroke: var(--selected);
+  stroke-width: 2.4;
+}
+
+.node-highlight {
+  stroke-width: 2;
+}
+
+.node-dim {
+  opacity: 0.28;
+}
+
+.details-panel {
+  font-size: 14px;
+}
+
+.details-panel h3 {
+  margin: 0 0 6px;
+}
+
+.details-panel .meta {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.details-panel ul {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  #graphSvg {
+    min-height: 560px;
+  }
+}

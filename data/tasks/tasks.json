@@ -1,0 +1,607 @@
+{
+  "schema_version": "1.0.0",
+  "tasks": [
+    {
+      "id": "3dm",
+      "title": "3-DIMENSIONAL-MATCHING",
+      "aliases": [
+        "3DM"
+      ],
+      "class": "NP-complete",
+      "statement": "Given disjoint sets X, Y, Z and triples T subset of X x Y x Z, decide whether there is a matching of size q using pairwise disjoint triples.",
+      "references": [
+        {
+          "label": "3-dimensional matching",
+          "url": "https://en.wikipedia.org/wiki/3-dimensional_matching"
+        }
+      ]
+    },
+    {
+      "id": "3sat",
+      "title": "3-SAT",
+      "aliases": [
+        "3CNF-SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a Boolean formula in 3-CNF, decide whether it is satisfiable.",
+      "references": [
+        {
+          "label": "3-SAT",
+          "url": "https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "balanced_biclique",
+      "title": "BALANCED-BICLIQUE",
+      "aliases": [
+        "Balanced Complete Bipartite Subgraph"
+      ],
+      "class": "NP-complete",
+      "statement": "Given bipartite graph G and integer k, decide whether G contains K_{k,k} as a subgraph.",
+      "references": [
+        {
+          "label": "BALANCED-BICLIQUE",
+          "url": "https://en.wikipedia.org/wiki/Biclique"
+        }
+      ]
+    },
+    {
+      "id": "bin_packing_decision",
+      "title": "BIN-PACKING (decision)",
+      "aliases": [
+        "Bin Packing (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given item sizes, bin capacity B, and integer k, decide whether all items can be packed into at most k bins.",
+      "references": [
+        {
+          "label": "BIN-PACKING (decision)",
+          "url": "https://en.wikipedia.org/wiki/Bin_packing_problem"
+        }
+      ]
+    },
+    {
+      "id": "circuit_sat",
+      "title": "CIRCUIT-SAT",
+      "aliases": [
+        "Circuit Satisfiability"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a Boolean circuit C, decide whether there exists an input assignment that makes C output 1.",
+      "references": [
+        {
+          "label": "Cook-Levin theorem overview",
+          "url": "https://en.wikipedia.org/wiki/Cook%E2%80%93Levin_theorem"
+        }
+      ]
+    },
+    {
+      "id": "clique",
+      "title": "CLIQUE",
+      "aliases": [
+        "k-CLIQUE"
+      ],
+      "class": "NP-complete",
+      "statement": "Given an undirected graph G and integer k, decide whether G has a clique of size at least k.",
+      "references": [
+        {
+          "label": "Clique problem",
+          "url": "https://en.wikipedia.org/wiki/Clique_problem"
+        }
+      ]
+    },
+    {
+      "id": "clique_cover",
+      "title": "CLIQUE-COVER",
+      "aliases": [
+        "Clique Cover"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether vertices of G can be partitioned into at most k cliques.",
+      "references": [
+        {
+          "label": "CLIQUE-COVER",
+          "url": "https://en.wikipedia.org/wiki/Clique_cover"
+        }
+      ]
+    },
+    {
+      "id": "connected_dominating_set",
+      "title": "CONNECTED-DOMINATING-SET",
+      "aliases": [
+        "Connected Dominating Set"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether G has a connected dominating set of size at most k.",
+      "references": [
+        {
+          "label": "CONNECTED-DOMINATING-SET",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "directed_hamiltonian_cycle",
+      "title": "DIRECTED-HAMILTONIAN-CYCLE",
+      "aliases": [
+        "DHC"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a directed graph G, decide whether G contains a directed Hamiltonian cycle.",
+      "references": [
+        {
+          "label": "DIRECTED-HAMILTONIAN-CYCLE",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "directed_hamiltonian_path",
+      "title": "DIRECTED-HAMILTONIAN-PATH",
+      "aliases": [
+        "DHP"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a directed graph G, decide whether G contains a directed Hamiltonian path.",
+      "references": [
+        {
+          "label": "DIRECTED-HAMILTONIAN-PATH",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "dominating_set",
+      "title": "DOMINATING-SET",
+      "aliases": [
+        "Dominating Set"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether G has a dominating set of size at most k.",
+      "references": [
+        {
+          "label": "Dominating set",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "edge_coloring_decision",
+      "title": "EDGE-COLORING (decision)",
+      "aliases": [
+        "Graph Edge Coloring (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k >= 3, decide whether edges of G can be properly colored with at most k colors.",
+      "references": [
+        {
+          "label": "EDGE-COLORING (decision)",
+          "url": "https://en.wikipedia.org/wiki/Graph_coloring"
+        }
+      ]
+    },
+    {
+      "id": "exact_cover",
+      "title": "EXACT-COVER",
+      "aliases": [
+        "Exact Cover"
+      ],
+      "class": "NP-complete",
+      "statement": "Given universe U and family S of subsets, decide whether there exists a subfamily that covers each element of U exactly once.",
+      "references": [
+        {
+          "label": "Exact cover",
+          "url": "https://en.wikipedia.org/wiki/Exact_cover"
+        }
+      ]
+    },
+    {
+      "id": "feedback_arc_set",
+      "title": "FEEDBACK-ARC-SET",
+      "aliases": [
+        "FAS"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a directed graph G and integer k, decide whether at most k arcs can be removed so the graph becomes acyclic.",
+      "references": [
+        {
+          "label": "FEEDBACK-ARC-SET",
+          "url": "https://en.wikipedia.org/wiki/Feedback_arc_set"
+        }
+      ]
+    },
+    {
+      "id": "feedback_vertex_set",
+      "title": "FEEDBACK-VERTEX-SET",
+      "aliases": [
+        "FVS"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether one can delete at most k vertices so the remaining graph is acyclic.",
+      "references": [
+        {
+          "label": "Feedback vertex set",
+          "url": "https://en.wikipedia.org/wiki/Feedback_vertex_set"
+        }
+      ]
+    },
+    {
+      "id": "graph_bandwidth",
+      "title": "GRAPH-BANDWIDTH",
+      "aliases": [
+        "Bandwidth Problem"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer b, decide whether vertices can be labeled so each edge spans labels differing by at most b.",
+      "references": [
+        {
+          "label": "GRAPH-BANDWIDTH",
+          "url": "https://en.wikipedia.org/wiki/Graph_bandwidth"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle",
+      "title": "HAMILTONIAN-CYCLE",
+      "aliases": [
+        "HC"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G, decide whether G contains a Hamiltonian cycle.",
+      "references": [
+        {
+          "label": "Hamiltonian path problem",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_path",
+      "title": "HAMILTONIAN-PATH",
+      "aliases": [
+        "HP"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G, decide whether G contains a Hamiltonian path.",
+      "references": [
+        {
+          "label": "Hamiltonian path problem",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hitting_set",
+      "title": "HITTING-SET",
+      "aliases": [
+        "Hitting Set"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a universe U, family S of subsets, and integer k, decide whether there is a size-k subset of U intersecting every set in S.",
+      "references": [
+        {
+          "label": "HITTING-SET",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "ilp_feasibility_01",
+      "title": "0-1-INTEGER-LINEAR-PROGRAMMING-FEASIBILITY",
+      "aliases": [
+        "0-1 ILP Feasibility"
+      ],
+      "class": "NP-complete",
+      "statement": "Given linear constraints over binary variables, decide whether there exists a 0-1 assignment satisfying all constraints.",
+      "references": [
+        {
+          "label": "0-1-INTEGER-LINEAR-PROGRAMMING-FEASIBILITY",
+          "url": "https://en.wikipedia.org/wiki/Integer_programming"
+        }
+      ]
+    },
+    {
+      "id": "independent_set",
+      "title": "INDEPENDENT-SET",
+      "aliases": [
+        "Independent Set"
+      ],
+      "class": "NP-complete",
+      "statement": "Given an undirected graph G and integer k, decide whether G has an independent set of size at least k.",
+      "references": [
+        {
+          "label": "Independent set problem",
+          "url": "https://en.wikipedia.org/wiki/Independent_set_(graph_theory)#Maximum_independent_set_problem"
+        }
+      ]
+    },
+    {
+      "id": "k_colorability",
+      "title": "k-COLORABILITY",
+      "aliases": [
+        "Graph k-Colorability",
+        "3-COLORING"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k >= 3, decide whether G is properly colorable with at most k colors.",
+      "references": [
+        {
+          "label": "Graph coloring",
+          "url": "https://en.wikipedia.org/wiki/Graph_coloring"
+        }
+      ]
+    },
+    {
+      "id": "knapsack_decision",
+      "title": "KNAPSACK (decision)",
+      "aliases": [
+        "0-1 Knapsack (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given item weights and values plus bounds W and V, decide whether there exists a subset with total weight at most W and value at least V.",
+      "references": [
+        {
+          "label": "Knapsack problem",
+          "url": "https://en.wikipedia.org/wiki/Knapsack_problem"
+        }
+      ]
+    },
+    {
+      "id": "longest_path_decision",
+      "title": "LONGEST-PATH (decision)",
+      "aliases": [
+        "Longest Path (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether G has a simple path with at least k edges.",
+      "references": [
+        {
+          "label": "LONGEST-PATH (decision)",
+          "url": "https://en.wikipedia.org/wiki/Longest_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "max_cut_decision",
+      "title": "MAX-CUT (decision)",
+      "aliases": [
+        "Max Cut (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer B, decide whether G has a cut with at least B crossing edges.",
+      "references": [
+        {
+          "label": "Maximum cut",
+          "url": "https://en.wikipedia.org/wiki/Maximum_cut"
+        }
+      ]
+    },
+    {
+      "id": "minimum_fill_in",
+      "title": "MINIMUM-FILL-IN",
+      "aliases": [
+        "Minimum Fill-in"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer k, decide whether at most k edges can be added to make G chordal.",
+      "references": [
+        {
+          "label": "MINIMUM-FILL-IN",
+          "url": "https://en.wikipedia.org/wiki/Chordal_graph"
+        }
+      ]
+    },
+    {
+      "id": "nae_3sat",
+      "title": "NAE-3SAT",
+      "aliases": [
+        "Not-All-Equal 3SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a 3-CNF formula, decide whether there is an assignment where each clause has at least one true and at least one false literal.",
+      "references": [
+        {
+          "label": "NAE-3SAT",
+          "url": "https://en.wikipedia.org/wiki/Not-all-equal_3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "one_in_three_sat",
+      "title": "ONE-IN-THREE-SAT",
+      "aliases": [
+        "1-in-3 SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a 3-CNF formula, decide whether there exists an assignment making exactly one literal true in every clause.",
+      "references": [
+        {
+          "label": "ONE-IN-THREE-SAT",
+          "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
+      "id": "partition",
+      "title": "PARTITION",
+      "aliases": [
+        "Partition problem"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a multiset of positive integers, decide whether it can be partitioned into two subsets with equal sum.",
+      "references": [
+        {
+          "label": "Partition problem",
+          "url": "https://en.wikipedia.org/wiki/Partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "partition_into_triangles",
+      "title": "PARTITION-INTO-TRIANGLES",
+      "aliases": [
+        "Triangle Partition"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G, decide whether vertices can be partitioned into disjoint triangles.",
+      "references": [
+        {
+          "label": "PARTITION-INTO-TRIANGLES",
+          "url": "https://en.wikipedia.org/wiki/List_of_NP-complete_problems"
+        }
+      ]
+    },
+    {
+      "id": "planar_3sat",
+      "title": "PLANAR-3SAT",
+      "aliases": [
+        "Planar 3-SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a planar 3-CNF incidence structure, decide whether the formula is satisfiable.",
+      "references": [
+        {
+          "label": "PLANAR-3SAT",
+          "url": "https://en.wikipedia.org/wiki/Planar_SAT"
+        }
+      ]
+    },
+    {
+      "id": "sat",
+      "title": "SAT",
+      "aliases": [
+        "CNF-SAT",
+        "Boolean Satisfiability"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a Boolean formula phi, decide whether phi is satisfiable.",
+      "references": [
+        {
+          "label": "SAT",
+          "url": "https://en.wikipedia.org/wiki/Boolean_satisfiability_problem"
+        }
+      ]
+    },
+    {
+      "id": "set_cover",
+      "title": "SET-COVER",
+      "aliases": [
+        "Set Cover"
+      ],
+      "class": "NP-complete",
+      "statement": "Given universe U, family S of subsets of U, and integer k, decide whether there is a subfamily of size at most k covering U.",
+      "references": [
+        {
+          "label": "Set cover problem",
+          "url": "https://en.wikipedia.org/wiki/Set_cover_problem"
+        }
+      ]
+    },
+    {
+      "id": "set_packing",
+      "title": "SET-PACKING",
+      "aliases": [
+        "Set Packing"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a family of sets and integer k, decide whether there exist at least k pairwise disjoint sets.",
+      "references": [
+        {
+          "label": "SET-PACKING",
+          "url": "https://en.wikipedia.org/wiki/Set_packing"
+        }
+      ]
+    },
+    {
+      "id": "steiner_tree_decision",
+      "title": "STEINER-TREE (decision)",
+      "aliases": [
+        "Steiner Tree (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a weighted graph, terminal set R, and bound B, decide whether there is a tree spanning all terminals with total weight at most B.",
+      "references": [
+        {
+          "label": "STEINER-TREE (decision)",
+          "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+        }
+      ]
+    },
+    {
+      "id": "subset_sum",
+      "title": "SUBSET-SUM",
+      "aliases": [
+        "Subset Sum"
+      ],
+      "class": "NP-complete",
+      "statement": "Given integers a1..an and target T, decide whether some subset sums exactly to T.",
+      "references": [
+        {
+          "label": "Subset sum problem",
+          "url": "https://en.wikipedia.org/wiki/Subset_sum_problem"
+        }
+      ]
+    },
+    {
+      "id": "three_partition",
+      "title": "3-PARTITION",
+      "aliases": [
+        "3-Partition"
+      ],
+      "class": "NP-complete",
+      "statement": "Given 3m integers and bound B, decide whether they can be partitioned into m triples each summing exactly to B.",
+      "references": [
+        {
+          "label": "3-PARTITION",
+          "url": "https://en.wikipedia.org/wiki/3-partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "tsp_decision",
+      "title": "TSP (decision)",
+      "aliases": [
+        "Traveling Salesman Problem (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a weighted complete graph and bound B, decide whether there is a tour of total weight at most B.",
+      "references": [
+        {
+          "label": "Travelling salesman problem",
+          "url": "https://en.wikipedia.org/wiki/Travelling_salesman_problem"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover",
+      "title": "VERTEX-COVER",
+      "aliases": [
+        "Vertex Cover"
+      ],
+      "class": "NP-complete",
+      "statement": "Given an undirected graph G and integer k, decide whether G has a vertex cover of size at most k.",
+      "references": [
+        {
+          "label": "Vertex cover",
+          "url": "https://en.wikipedia.org/wiki/Vertex_cover"
+        }
+      ]
+    },
+    {
+      "id": "x3c",
+      "title": "EXACT-COVER-BY-3-SETS",
+      "aliases": [
+        "X3C"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a universe U with |U| = 3q and a family of 3-element subsets, decide whether there is an exact cover of U with q subsets.",
+      "references": [
+        {
+          "label": "Exact cover",
+          "url": "https://en.wikipedia.org/wiki/Exact_cover"
+        }
+      ]
+    }
+  ]
+}

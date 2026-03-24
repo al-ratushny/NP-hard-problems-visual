@@ -1,0 +1,1253 @@
+{
+  "schema_version": "1.0.0",
+  "reductions": [
+    {
+      "id": "3dm_to_set_packing",
+      "from": "3dm",
+      "to": "set_packing",
+      "type": "karp",
+      "idea": "Each triple is a set; disjoint triples correspond directly to set-packing solutions.",
+      "references": [
+        {
+          "label": "3dm to set_packing",
+          "url": "https://en.wikipedia.org/wiki/3-dimensional_matching"
+        }
+      ]
+    },
+    {
+      "id": "3dm_to_x3c",
+      "from": "3dm",
+      "to": "x3c",
+      "type": "karp",
+      "idea": "Interpret each triple as a 3-element subset and require selecting disjoint triples covering all elements exactly once.",
+      "references": [
+        {
+          "label": "3DM and exact cover relation",
+          "url": "https://en.wikipedia.org/wiki/3-dimensional_matching"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_3dm",
+      "from": "3sat",
+      "to": "3dm",
+      "type": "karp",
+      "idea": "Create triples that encode variable choices and clause satisfaction so a perfect-size matching corresponds to a satisfying assignment.",
+      "references": [
+        {
+          "label": "3-dimensional matching NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/3-dimensional_matching"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_balanced_biclique",
+      "from": "3sat",
+      "to": "balanced_biclique",
+      "type": "karp",
+      "idea": "Compose known 3-SAT to clique reduction with clique to biclique transformation.",
+      "references": [
+        {
+          "label": "3sat to balanced_biclique",
+          "url": "https://en.wikipedia.org/wiki/Biclique"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_clique",
+      "from": "3sat",
+      "to": "clique",
+      "type": "karp",
+      "idea": "For each clause, create three literal vertices and connect pairwise non-contradictory literals across clauses; a k-clique selects one true literal per clause.",
+      "references": [
+        {
+          "label": "3SAT to CLIQUE",
+          "url": "https://en.wikipedia.org/wiki/Clique_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_hamiltonian_cycle",
+      "from": "3sat",
+      "to": "hamiltonian_cycle",
+      "type": "karp",
+      "idea": "Use variable traversal gadgets and clause connectors so a Hamiltonian cycle exists iff there is a satisfying assignment.",
+      "references": [
+        {
+          "label": "Hamiltonian path problem NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_independent_set",
+      "from": "3sat",
+      "to": "independent_set",
+      "type": "karp",
+      "idea": "Equivalent to the 3SAT to Clique construction on a complement-style conflict graph with target size equal to clause count.",
+      "references": [
+        {
+          "label": "3SAT reductions",
+          "url": "https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#NP-complete"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_k_colorability",
+      "from": "3sat",
+      "to": "k_colorability",
+      "type": "karp",
+      "idea": "Build variable and clause gadgets forcing a proper 3-coloring exactly when each clause has at least one satisfied literal.",
+      "references": [
+        {
+          "label": "Graph coloring NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Graph_coloring"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_knapsack_decision",
+      "from": "3sat",
+      "to": "knapsack_decision",
+      "type": "karp",
+      "idea": "Compose 3-SAT to SUBSET-SUM and SUBSET-SUM to KNAPSACK(decision).",
+      "references": [
+        {
+          "label": "3sat to knapsack_decision",
+          "url": "https://en.wikipedia.org/wiki/Knapsack_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_nae_3sat",
+      "from": "3sat",
+      "to": "nae_3sat",
+      "type": "karp",
+      "idea": "Use clause transformation with polarity gadgets to enforce not-all-equal semantics.",
+      "references": [
+        {
+          "label": "3sat to nae_3sat",
+          "url": "https://en.wikipedia.org/wiki/Not-all-equal_3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_one_in_three_sat",
+      "from": "3sat",
+      "to": "one_in_three_sat",
+      "type": "karp",
+      "idea": "Replace each clause by gadgets that enforce exactly one true literal while preserving satisfiability.",
+      "references": [
+        {
+          "label": "3sat to one_in_three_sat",
+          "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_partition",
+      "from": "3sat",
+      "to": "partition",
+      "type": "karp",
+      "idea": "Compose 3-SAT to SUBSET-SUM and SUBSET-SUM to PARTITION.",
+      "references": [
+        {
+          "label": "3sat to partition",
+          "url": "https://en.wikipedia.org/wiki/Partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_set_cover",
+      "from": "3sat",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "Compose 3-SAT to Vertex-Cover and Vertex-Cover to Set-Cover.",
+      "references": [
+        {
+          "label": "3sat to set_cover",
+          "url": "https://en.wikipedia.org/wiki/Set_cover_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_subset_sum",
+      "from": "3sat",
+      "to": "subset_sum",
+      "type": "karp",
+      "idea": "Encode truth assignments and clause satisfaction as digit positions in carefully chosen numbers with no carry conflicts.",
+      "references": [
+        {
+          "label": "Subset sum NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Subset_sum_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_tsp_decision",
+      "from": "3sat",
+      "to": "tsp_decision",
+      "type": "karp",
+      "idea": "Compose 3-SAT to Hamiltonian-Cycle and Hamiltonian-Cycle to TSP(decision).",
+      "references": [
+        {
+          "label": "3sat to tsp_decision",
+          "url": "https://en.wikipedia.org/wiki/Travelling_salesman_problem"
+        }
+      ]
+    },
+    {
+      "id": "3sat_to_vertex_cover",
+      "from": "3sat",
+      "to": "vertex_cover",
+      "type": "karp",
+      "idea": "Construct variable pair gadgets and clause triangles so a minimum cover of target size encodes a satisfying assignment.",
+      "references": [
+        {
+          "label": "3SAT to Vertex Cover",
+          "url": "https://en.wikipedia.org/wiki/Vertex_cover"
+        }
+      ]
+    },
+    {
+      "id": "circuit_sat_to_sat",
+      "from": "circuit_sat",
+      "to": "sat",
+      "type": "karp",
+      "idea": "Encode each gate output with a fresh variable and add CNF constraints that force consistency with gate semantics.",
+      "references": [
+        {
+          "label": "Cook-Levin theorem",
+          "url": "https://en.wikipedia.org/wiki/Cook%E2%80%93Levin_theorem"
+        }
+      ]
+    },
+    {
+      "id": "clique_cover_to_k_colorability",
+      "from": "clique_cover",
+      "to": "k_colorability",
+      "type": "karp",
+      "idea": "Coloring in complement graph corresponds to clique partition in original graph.",
+      "references": [
+        {
+          "label": "clique_cover to k_colorability",
+          "url": "https://en.wikipedia.org/wiki/Clique_cover"
+        }
+      ]
+    },
+    {
+      "id": "clique_to_balanced_biclique",
+      "from": "clique",
+      "to": "balanced_biclique",
+      "type": "karp",
+      "idea": "Create bipartite compatibility instance where selecting K_{k,k} encodes original clique choices.",
+      "references": [
+        {
+          "label": "clique to balanced_biclique",
+          "url": "https://en.wikipedia.org/wiki/Biclique"
+        }
+      ]
+    },
+    {
+      "id": "clique_to_clique_cover",
+      "from": "clique",
+      "to": "clique_cover",
+      "type": "karp",
+      "idea": "Use complement graph relation between large cliques and small clique partitions under threshold transforms.",
+      "references": [
+        {
+          "label": "clique to clique_cover",
+          "url": "https://en.wikipedia.org/wiki/Clique_cover"
+        }
+      ]
+    },
+    {
+      "id": "clique_to_independent_set",
+      "from": "clique",
+      "to": "independent_set",
+      "type": "karp",
+      "idea": "Map instance to complement graph; a k-clique in G is a k-independent set in complement(G).",
+      "references": [
+        {
+          "label": "Clique and independent set relation",
+          "url": "https://en.wikipedia.org/wiki/Clique_problem"
+        }
+      ]
+    },
+    {
+      "id": "clique_to_vertex_cover",
+      "from": "clique",
+      "to": "vertex_cover",
+      "type": "karp",
+      "idea": "Use graph complement and threshold transform k -> n-k, then apply clique-independent-set-vertex-cover equivalence.",
+      "references": [
+        {
+          "label": "Clique and vertex cover relation",
+          "url": "https://en.wikipedia.org/wiki/Clique_problem#NP-completeness"
+        }
+      ]
+    },
+    {
+      "id": "directed_hamiltonian_cycle_to_directed_hamiltonian_path",
+      "from": "directed_hamiltonian_cycle",
+      "to": "directed_hamiltonian_path",
+      "type": "karp",
+      "idea": "Split a chosen vertex into source/target gadget; directed Hamiltonian cycle maps to directed Hamiltonian path.",
+      "references": [
+        {
+          "label": "directed_hamiltonian_cycle to directed_hamiltonian_path",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "dominating_set_to_connected_dominating_set",
+      "from": "dominating_set",
+      "to": "connected_dominating_set",
+      "type": "karp",
+      "idea": "Add connector gadgets so feasible dominating selections must be connected without changing bound significantly.",
+      "references": [
+        {
+          "label": "dominating_set to connected_dominating_set",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "dominating_set_to_set_cover",
+      "from": "dominating_set",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "Universe is V and each vertex defines set N[v]; selecting k vertices dominating G equals selecting k sets covering V.",
+      "references": [
+        {
+          "label": "Dominating set relation to set cover",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "exact_cover_to_hitting_set",
+      "from": "exact_cover",
+      "to": "hitting_set",
+      "type": "karp",
+      "idea": "Dual incidence representation maps exact cover selection to bounded hitting sets under gadget constraints.",
+      "references": [
+        {
+          "label": "exact_cover to hitting_set",
+          "url": "https://en.wikipedia.org/wiki/Exact_cover"
+        }
+      ]
+    },
+    {
+      "id": "exact_cover_to_set_cover",
+      "from": "exact_cover",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "Reuse same universe and subset family, then enforce cover-size constraints matching exact-cover cardinality conditions.",
+      "references": [
+        {
+          "label": "Set cover problem",
+          "url": "https://en.wikipedia.org/wiki/Set_cover_problem"
+        }
+      ]
+    },
+    {
+      "id": "feedback_arc_set_to_feedback_vertex_set",
+      "from": "feedback_arc_set",
+      "to": "feedback_vertex_set",
+      "type": "karp",
+      "idea": "Use arc-to-vertex gadget transformation where deleting few vertices simulates removing few feedback arcs.",
+      "references": [
+        {
+          "label": "feedback_arc_set to feedback_vertex_set",
+          "url": "https://en.wikipedia.org/wiki/Feedback_arc_set"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle_to_directed_hamiltonian_cycle",
+      "from": "hamiltonian_cycle",
+      "to": "directed_hamiltonian_cycle",
+      "type": "karp",
+      "idea": "Replace each undirected edge by two opposite arcs; Hamiltonian cycle is preserved.",
+      "references": [
+        {
+          "label": "hamiltonian_cycle to directed_hamiltonian_cycle",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle_to_directed_hamiltonian_path",
+      "from": "hamiltonian_cycle",
+      "to": "directed_hamiltonian_path",
+      "type": "karp",
+      "idea": "Compose reduction to directed Hamiltonian cycle and then to directed Hamiltonian path.",
+      "references": [
+        {
+          "label": "hamiltonian_cycle to directed_hamiltonian_path",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle_to_hamiltonian_path",
+      "from": "hamiltonian_cycle",
+      "to": "hamiltonian_path",
+      "type": "karp",
+      "idea": "Break one vertex with forced entry/exit gadget so a Hamiltonian path exists iff original graph had a Hamiltonian cycle.",
+      "references": [
+        {
+          "label": "Hamiltonian path problem",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle_to_longest_path",
+      "from": "hamiltonian_cycle",
+      "to": "longest_path_decision",
+      "type": "karp",
+      "idea": "Compose Hamiltonian-cycle to Hamiltonian-path and thresholded longest-path reduction.",
+      "references": [
+        {
+          "label": "hamiltonian_cycle to longest_path_decision",
+          "url": "https://en.wikipedia.org/wiki/Longest_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle_to_tsp_decision",
+      "from": "hamiltonian_cycle",
+      "to": "tsp_decision",
+      "type": "karp",
+      "idea": "Assign weight 1 to original edges and 2 to non-edges, then ask whether there is a tour of cost at most n.",
+      "references": [
+        {
+          "label": "TSP NP-hardness from Hamiltonian cycle",
+          "url": "https://en.wikipedia.org/wiki/Travelling_salesman_problem#Computational_complexity"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_path_to_directed_hamiltonian_path",
+      "from": "hamiltonian_path",
+      "to": "directed_hamiltonian_path",
+      "type": "karp",
+      "idea": "Replace each undirected edge by opposite arcs; directed path existence mirrors undirected path.",
+      "references": [
+        {
+          "label": "hamiltonian_path to directed_hamiltonian_path",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_path_to_longest_path",
+      "from": "hamiltonian_path",
+      "to": "longest_path_decision",
+      "type": "karp",
+      "idea": "Set threshold k=n-1 so existence of a Hamiltonian path is equivalent to a sufficiently long simple path.",
+      "references": [
+        {
+          "label": "hamiltonian_path to longest_path_decision",
+          "url": "https://en.wikipedia.org/wiki/Longest_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_path_to_tsp_decision",
+      "from": "hamiltonian_path",
+      "to": "tsp_decision",
+      "type": "karp",
+      "idea": "Add a forced connector vertex and edge weights so a short TSP tour exists iff original graph has Hamiltonian path.",
+      "references": [
+        {
+          "label": "Hamiltonian path and TSP reductions",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hitting_set_to_set_cover",
+      "from": "hitting_set",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "Dualize incidence matrix so selecting hitting elements becomes selecting covering subsets.",
+      "references": [
+        {
+          "label": "hitting_set to set_cover",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "hitting_set_to_set_packing",
+      "from": "hitting_set",
+      "to": "set_packing",
+      "type": "karp",
+      "idea": "Dualize to set-cover style instance and map to packing on conflict graph.",
+      "references": [
+        {
+          "label": "hitting_set to set_packing",
+          "url": "https://en.wikipedia.org/wiki/Set_packing"
+        }
+      ]
+    },
+    {
+      "id": "hitting_set_to_vertex_cover",
+      "from": "hitting_set",
+      "to": "vertex_cover",
+      "type": "karp",
+      "idea": "Restrict to 2-uniform instances where hitting set is exactly vertex cover on corresponding graph.",
+      "references": [
+        {
+          "label": "hitting_set to vertex_cover",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "ilp_feasibility_01_to_sat",
+      "from": "ilp_feasibility_01",
+      "to": "sat",
+      "type": "karp",
+      "idea": "Encode 0-1 linear constraints into Boolean formulas with polynomial-size arithmetic circuits/CNF encoding.",
+      "references": [
+        {
+          "label": "ilp_feasibility_01 to sat",
+          "url": "https://en.wikipedia.org/wiki/Integer_programming"
+        }
+      ]
+    },
+    {
+      "id": "independent_set_to_clique",
+      "from": "independent_set",
+      "to": "clique",
+      "type": "karp",
+      "idea": "Use graph complement; an independent set of size k in G is a clique of size k in complement(G).",
+      "references": [
+        {
+          "label": "Independent set and clique relation",
+          "url": "https://en.wikipedia.org/wiki/Independent_set_(graph_theory)#Related_combinatorial_optimization_problems"
+        }
+      ]
+    },
+    {
+      "id": "independent_set_to_clique_cover",
+      "from": "independent_set",
+      "to": "clique_cover",
+      "type": "karp",
+      "idea": "Compose independent-set to clique and clique to clique-cover transformations.",
+      "references": [
+        {
+          "label": "independent_set to clique_cover",
+          "url": "https://en.wikipedia.org/wiki/Clique_cover"
+        }
+      ]
+    },
+    {
+      "id": "independent_set_to_set_packing",
+      "from": "independent_set",
+      "to": "set_packing",
+      "type": "karp",
+      "idea": "Map each vertex to a set of incident-edge identifiers; pairwise disjointness captures non-adjacency.",
+      "references": [
+        {
+          "label": "independent_set to set_packing",
+          "url": "https://en.wikipedia.org/wiki/Set_packing"
+        }
+      ]
+    },
+    {
+      "id": "independent_set_to_vertex_cover",
+      "from": "independent_set",
+      "to": "vertex_cover",
+      "type": "karp",
+      "idea": "In a graph with n vertices, existence of independent set size k is equivalent to a vertex cover of size at most n-k.",
+      "references": [
+        {
+          "label": "Independent set and vertex cover relation",
+          "url": "https://en.wikipedia.org/wiki/Vertex_cover#NP-hardness"
+        }
+      ]
+    },
+    {
+      "id": "k_colorability_to_clique_cover",
+      "from": "k_colorability",
+      "to": "clique_cover",
+      "type": "karp",
+      "idea": "Take graph complement: proper coloring classes in G become cliques covering complement(G).",
+      "references": [
+        {
+          "label": "k_colorability to clique_cover",
+          "url": "https://en.wikipedia.org/wiki/Clique_cover"
+        }
+      ]
+    },
+    {
+      "id": "k_colorability_to_edge_coloring",
+      "from": "k_colorability",
+      "to": "edge_coloring_decision",
+      "type": "karp",
+      "idea": "Transform vertex-coloring instance to line-graph related edge-coloring instance with bound-preserving gadgets.",
+      "references": [
+        {
+          "label": "k_colorability to edge_coloring_decision",
+          "url": "https://en.wikipedia.org/wiki/Graph_coloring"
+        }
+      ]
+    },
+    {
+      "id": "knapsack_to_bin_packing",
+      "from": "knapsack_decision",
+      "to": "bin_packing_decision",
+      "type": "karp",
+      "idea": "Transform value/weight constraints to packing bins with capacity profile enforcing chosen subset constraints.",
+      "references": [
+        {
+          "label": "knapsack_decision to bin_packing_decision",
+          "url": "https://en.wikipedia.org/wiki/Bin_packing_problem"
+        }
+      ]
+    },
+    {
+      "id": "nae_3sat_to_one_in_three_sat",
+      "from": "nae_3sat",
+      "to": "one_in_three_sat",
+      "type": "karp",
+      "idea": "Use local gadget replacements to refine not-all-equal clauses into exactly-one constraints.",
+      "references": [
+        {
+          "label": "nae_3sat to one_in_three_sat",
+          "url": "https://en.wikipedia.org/wiki/Not-all-equal_3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "one_in_three_sat_to_nae_3sat",
+      "from": "one_in_three_sat",
+      "to": "nae_3sat",
+      "type": "karp",
+      "idea": "Exactly-one-true condition implies not-all-equal under a direct clause-preserving mapping.",
+      "references": [
+        {
+          "label": "one_in_three_sat to nae_3sat",
+          "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
+      "id": "partition_to_subset_sum",
+      "from": "partition",
+      "to": "subset_sum",
+      "type": "karp",
+      "idea": "Set target to half of total sum; equal partition exists iff there is a subset summing to total/2.",
+      "references": [
+        {
+          "label": "Partition and subset sum relation",
+          "url": "https://en.wikipedia.org/wiki/Partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "partition_to_three_partition",
+      "from": "partition",
+      "to": "three_partition",
+      "type": "karp",
+      "idea": "Embed partition instance into constrained triple-sum framework with balancing elements.",
+      "references": [
+        {
+          "label": "partition to three_partition",
+          "url": "https://en.wikipedia.org/wiki/3-partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "planar_3sat_to_3sat",
+      "from": "planar_3sat",
+      "to": "3sat",
+      "type": "karp",
+      "idea": "Planar 3-SAT is a restricted subclass of 3-SAT, so identity mapping gives a reduction.",
+      "references": [
+        {
+          "label": "planar_3sat to 3sat",
+          "url": "https://en.wikipedia.org/wiki/Planar_SAT"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_3sat",
+      "from": "sat",
+      "to": "3sat",
+      "type": "karp",
+      "idea": "Transform each clause into an equisatisfiable set of 3-literal clauses using auxiliary variables.",
+      "references": [
+        {
+          "label": "3-SAT reduction",
+          "url": "https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_clique",
+      "from": "sat",
+      "to": "clique",
+      "type": "karp",
+      "idea": "Build a graph with one vertex per literal occurrence per clause and connect pairwise consistent choices from different clauses.",
+      "references": [
+        {
+          "label": "Clique problem and SAT reduction",
+          "url": "https://en.wikipedia.org/wiki/Clique_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_dominating_set",
+      "from": "sat",
+      "to": "dominating_set",
+      "type": "karp",
+      "idea": "Compose SAT to Vertex-Cover and Vertex-Cover style reduction to Dominating-Set family.",
+      "references": [
+        {
+          "label": "sat to dominating_set",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_graph_bandwidth",
+      "from": "sat",
+      "to": "graph_bandwidth",
+      "type": "karp",
+      "idea": "Encode variables and clauses in ordering gadgets forcing bounded bandwidth iff formula is satisfiable.",
+      "references": [
+        {
+          "label": "sat to graph_bandwidth",
+          "url": "https://en.wikipedia.org/wiki/Graph_bandwidth"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_hamiltonian_cycle",
+      "from": "sat",
+      "to": "hamiltonian_cycle",
+      "type": "karp",
+      "idea": "Convert SAT to 3-SAT and then to Hamiltonian Cycle using standard variable/clause gadget construction.",
+      "references": [
+        {
+          "label": "Hamiltonian cycle NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_hamiltonian_path",
+      "from": "sat",
+      "to": "hamiltonian_path",
+      "type": "karp",
+      "idea": "Compose SAT to Hamiltonian-Cycle then Hamiltonian-Cycle to Hamiltonian-Path.",
+      "references": [
+        {
+          "label": "sat to hamiltonian_path",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_ilp_feasibility_01",
+      "from": "sat",
+      "to": "ilp_feasibility_01",
+      "type": "karp",
+      "idea": "Encode each clause as a linear inequality over binary variables; feasibility matches satisfiability.",
+      "references": [
+        {
+          "label": "sat to ilp_feasibility_01",
+          "url": "https://en.wikipedia.org/wiki/Integer_programming"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_independent_set",
+      "from": "sat",
+      "to": "independent_set",
+      "type": "karp",
+      "idea": "Use one vertex per clause-literal occurrence and forbid conflicting or same-clause pairs; pick one consistent literal per clause.",
+      "references": [
+        {
+          "label": "Independent set NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Independent_set_(graph_theory)#Maximum_independent_set_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_knapsack_decision",
+      "from": "sat",
+      "to": "knapsack_decision",
+      "type": "karp",
+      "idea": "Compose SAT to SUBSET-SUM then SUBSET-SUM to KNAPSACK(decision).",
+      "references": [
+        {
+          "label": "sat to knapsack_decision",
+          "url": "https://en.wikipedia.org/wiki/Knapsack_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_minimum_fill_in",
+      "from": "sat",
+      "to": "minimum_fill_in",
+      "type": "karp",
+      "idea": "Construct graph where few fill edges to chordality correspond to satisfying assignments.",
+      "references": [
+        {
+          "label": "sat to minimum_fill_in",
+          "url": "https://en.wikipedia.org/wiki/Chordal_graph"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_nae_3sat",
+      "from": "sat",
+      "to": "nae_3sat",
+      "type": "karp",
+      "idea": "Convert clauses with gadgets so satisfiability corresponds to not-all-equal satisfaction.",
+      "references": [
+        {
+          "label": "sat to nae_3sat",
+          "url": "https://en.wikipedia.org/wiki/Not-all-equal_3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_one_in_three_sat",
+      "from": "sat",
+      "to": "one_in_three_sat",
+      "type": "karp",
+      "idea": "Use standard clause gadgets enforcing exactly one true literal in each transformed clause.",
+      "references": [
+        {
+          "label": "sat to one_in_three_sat",
+          "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_partition",
+      "from": "sat",
+      "to": "partition",
+      "type": "karp",
+      "idea": "Compose SAT to SUBSET-SUM and SUBSET-SUM to PARTITION.",
+      "references": [
+        {
+          "label": "sat to partition",
+          "url": "https://en.wikipedia.org/wiki/Partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_planar_3sat",
+      "from": "sat",
+      "to": "planar_3sat",
+      "type": "karp",
+      "idea": "Compose SAT to 3-SAT with planarity-enforcing crossover gadgets.",
+      "references": [
+        {
+          "label": "sat to planar_3sat",
+          "url": "https://en.wikipedia.org/wiki/Planar_SAT"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_set_cover",
+      "from": "sat",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "Compose SAT to Vertex-Cover and Vertex-Cover to Set-Cover reductions.",
+      "references": [
+        {
+          "label": "sat to set_cover",
+          "url": "https://en.wikipedia.org/wiki/Set_cover_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_subset_sum",
+      "from": "sat",
+      "to": "subset_sum",
+      "type": "karp",
+      "idea": "Compose SAT to 3-SAT and 3-SAT to SUBSET-SUM.",
+      "references": [
+        {
+          "label": "sat to subset_sum",
+          "url": "https://en.wikipedia.org/wiki/Subset_sum_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_tsp_decision",
+      "from": "sat",
+      "to": "tsp_decision",
+      "type": "karp",
+      "idea": "Compose SAT to Hamiltonian-Cycle and Hamiltonian-Cycle to TSP(decision).",
+      "references": [
+        {
+          "label": "sat to tsp_decision",
+          "url": "https://en.wikipedia.org/wiki/Travelling_salesman_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_vertex_cover",
+      "from": "sat",
+      "to": "vertex_cover",
+      "type": "karp",
+      "idea": "Use variable and clause gadgets so choosing a small vertex cover corresponds to selecting a satisfying assignment.",
+      "references": [
+        {
+          "label": "Vertex cover NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Vertex_cover"
+        }
+      ]
+    },
+    {
+      "id": "set_cover_to_connected_dominating_set",
+      "from": "set_cover",
+      "to": "connected_dominating_set",
+      "type": "karp",
+      "idea": "Attach connectivity gadgets to set-cover construction so selected sets induce a connected dominating structure.",
+      "references": [
+        {
+          "label": "set_cover to connected_dominating_set",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "set_cover_to_dominating_set",
+      "from": "set_cover",
+      "to": "dominating_set",
+      "type": "karp",
+      "idea": "Build bipartite incidence graph where choosing sets to cover elements corresponds to dominating required nodes.",
+      "references": [
+        {
+          "label": "set_cover to dominating_set",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "set_cover_to_hitting_set",
+      "from": "set_cover",
+      "to": "hitting_set",
+      "type": "karp",
+      "idea": "Use incidence dual hypergraph: covering sets correspond to hitting elements in the dual instance.",
+      "references": [
+        {
+          "label": "set_cover to hitting_set",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "set_cover_to_steiner_tree",
+      "from": "set_cover",
+      "to": "steiner_tree_decision",
+      "type": "karp",
+      "idea": "Encode elements as terminals and sets as Steiner choices so low-cost Steiner tree corresponds to small cover.",
+      "references": [
+        {
+          "label": "set_cover to steiner_tree_decision",
+          "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+        }
+      ]
+    },
+    {
+      "id": "set_packing_to_clique",
+      "from": "set_packing",
+      "to": "clique",
+      "type": "karp",
+      "idea": "Build compatibility graph on sets and use complement to transform packing into clique requirement.",
+      "references": [
+        {
+          "label": "set_packing to clique",
+          "url": "https://en.wikipedia.org/wiki/Set_packing"
+        }
+      ]
+    },
+    {
+      "id": "set_packing_to_hitting_set",
+      "from": "set_packing",
+      "to": "hitting_set",
+      "type": "karp",
+      "idea": "Use dual hypergraph transformation and complement constraints from packing to transversal selection.",
+      "references": [
+        {
+          "label": "set_packing to hitting_set",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "set_packing_to_independent_set",
+      "from": "set_packing",
+      "to": "independent_set",
+      "type": "karp",
+      "idea": "Construct conflict graph on sets; disjoint family of size k corresponds to independent set size k.",
+      "references": [
+        {
+          "label": "set_packing to independent_set",
+          "url": "https://en.wikipedia.org/wiki/Set_packing"
+        }
+      ]
+    },
+    {
+      "id": "subset_sum_to_bin_packing",
+      "from": "subset_sum",
+      "to": "bin_packing_decision",
+      "type": "karp",
+      "idea": "Encode target feasibility as filling bins to exact capacities via item sizes and balancing filler items.",
+      "references": [
+        {
+          "label": "subset_sum to bin_packing_decision",
+          "url": "https://en.wikipedia.org/wiki/Bin_packing_problem"
+        }
+      ]
+    },
+    {
+      "id": "subset_sum_to_knapsack_decision",
+      "from": "subset_sum",
+      "to": "knapsack_decision",
+      "type": "karp",
+      "idea": "Use identical weights and values for each item and set W=V=T so feasible knapsack corresponds to exact subset sum.",
+      "references": [
+        {
+          "label": "Knapsack NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Knapsack_problem#Decision_problem"
+        }
+      ]
+    },
+    {
+      "id": "subset_sum_to_partition",
+      "from": "subset_sum",
+      "to": "partition",
+      "type": "karp",
+      "idea": "Add balancing numbers so target-sum feasibility becomes equivalent to splitting augmented multiset into equal halves.",
+      "references": [
+        {
+          "label": "Partition problem complexity",
+          "url": "https://en.wikipedia.org/wiki/Partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "subset_sum_to_three_partition",
+      "from": "subset_sum",
+      "to": "three_partition",
+      "type": "karp",
+      "idea": "Scale and pad numbers so target-sum choices correspond to exact triple partitions.",
+      "references": [
+        {
+          "label": "subset_sum to three_partition",
+          "url": "https://en.wikipedia.org/wiki/3-partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "three_partition_to_bin_packing",
+      "from": "three_partition",
+      "to": "bin_packing_decision",
+      "type": "karp",
+      "idea": "Create bins with capacity B and encode each integer as an item; feasible packing into m bins matches 3-partition.",
+      "references": [
+        {
+          "label": "three_partition to bin_packing_decision",
+          "url": "https://en.wikipedia.org/wiki/Bin_packing_problem"
+        }
+      ]
+    },
+    {
+      "id": "three_partition_to_partition_into_triangles",
+      "from": "three_partition",
+      "to": "partition_into_triangles",
+      "type": "karp",
+      "idea": "Use graph gadgets whose triangle partition encodes exact triple groupings.",
+      "references": [
+        {
+          "label": "three_partition to partition_into_triangles",
+          "url": "https://en.wikipedia.org/wiki/List_of_NP-complete_problems"
+        }
+      ]
+    },
+    {
+      "id": "tsp_to_steiner_tree",
+      "from": "tsp_decision",
+      "to": "steiner_tree_decision",
+      "type": "karp",
+      "idea": "Use complete-graph metric gadget where low-cost tour existence implies bounded Steiner connection and vice versa.",
+      "references": [
+        {
+          "label": "tsp_decision to steiner_tree_decision",
+          "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_clique",
+      "from": "vertex_cover",
+      "to": "clique",
+      "type": "karp",
+      "idea": "Transform to complement graph and threshold k -> n-k; small vertex cover corresponds to large clique in complement.",
+      "references": [
+        {
+          "label": "Vertex cover and clique relation",
+          "url": "https://en.wikipedia.org/wiki/Vertex_cover#NP-hardness"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_clique_cover",
+      "from": "vertex_cover",
+      "to": "clique_cover",
+      "type": "karp",
+      "idea": "Use graph complement where clique cover number equals chromatic number and transforms vertex-cover bound.",
+      "references": [
+        {
+          "label": "vertex_cover to clique_cover",
+          "url": "https://en.wikipedia.org/wiki/Clique_cover"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_connected_dominating_set",
+      "from": "vertex_cover",
+      "to": "connected_dominating_set",
+      "type": "karp",
+      "idea": "Attach connectivity gadgets to standard dominating-set reduction from vertex-cover-like choices.",
+      "references": [
+        {
+          "label": "vertex_cover to connected_dominating_set",
+          "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_feedback_arc_set",
+      "from": "vertex_cover",
+      "to": "feedback_arc_set",
+      "type": "karp",
+      "idea": "Orient and gadgetize edges so breaking all directed cycles corresponds to selecting a vertex cover.",
+      "references": [
+        {
+          "label": "vertex_cover to feedback_arc_set",
+          "url": "https://en.wikipedia.org/wiki/Feedback_arc_set"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_hitting_set",
+      "from": "vertex_cover",
+      "to": "hitting_set",
+      "type": "karp",
+      "idea": "Treat each edge as a 2-element set over vertices; hitting all sets equals covering all edges.",
+      "references": [
+        {
+          "label": "vertex_cover to hitting_set",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_set_cover",
+      "from": "vertex_cover",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "Treat edges as universe elements and each vertex as the set of incident edges; choose at most k such sets.",
+      "references": [
+        {
+          "label": "Set cover NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Set_cover_problem"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_steiner_tree",
+      "from": "vertex_cover",
+      "to": "steiner_tree_decision",
+      "type": "karp",
+      "idea": "Reduce via set-cover style incidence gadget and terminal constraints.",
+      "references": [
+        {
+          "label": "vertex_cover to steiner_tree_decision",
+          "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+        }
+      ]
+    },
+    {
+      "id": "x3c_to_exact_cover",
+      "from": "x3c",
+      "to": "exact_cover",
+      "type": "karp",
+      "idea": "This is a direct embedding since X3C is a special case of Exact Cover with every subset size exactly 3.",
+      "references": [
+        {
+          "label": "Exact cover definitions",
+          "url": "https://en.wikipedia.org/wiki/Exact_cover"
+        }
+      ]
+    },
+    {
+      "id": "x3c_to_hitting_set",
+      "from": "x3c",
+      "to": "hitting_set",
+      "type": "karp",
+      "idea": "Translate exact-cover triples into dual hitting constraints with size bound preserving exactness.",
+      "references": [
+        {
+          "label": "x3c to hitting_set",
+          "url": "https://en.wikipedia.org/wiki/Hitting_set"
+        }
+      ]
+    },
+    {
+      "id": "x3c_to_partition_into_triangles",
+      "from": "x3c",
+      "to": "partition_into_triangles",
+      "type": "karp",
+      "idea": "Use element/selector gadget graph where triangle partition encodes exact 3-set choices.",
+      "references": [
+        {
+          "label": "x3c to partition_into_triangles",
+          "url": "https://en.wikipedia.org/wiki/List_of_NP-complete_problems"
+        }
+      ]
+    },
+    {
+      "id": "x3c_to_set_cover",
+      "from": "x3c",
+      "to": "set_cover",
+      "type": "karp",
+      "idea": "X3C is a restricted set cover instance where each set has size 3 and exact cardinality constraints are enforced by target size.",
+      "references": [
+        {
+          "label": "Exact cover by 3-sets",
+          "url": "https://en.wikipedia.org/wiki/Exact_cover"
+        }
+      ]
+    },
+    {
+      "id": "x3c_to_set_packing",
+      "from": "x3c",
+      "to": "set_packing",
+      "type": "karp",
+      "idea": "X3C asks for q pairwise disjoint triples covering all elements, which is a constrained set-packing instance.",
+      "references": [
+        {
+          "label": "x3c to set_packing",
+          "url": "https://en.wikipedia.org/wiki/Set_packing"
+        }
+      ]
+    }
+  ]
+}
