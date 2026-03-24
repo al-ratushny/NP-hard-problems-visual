@@ -64,7 +64,7 @@ def validate_tasks_dataset(data, errors):
             errors.append(f"{p} must be an object")
             continue
 
-        for field in ["id", "title", "class", "statement", "references"]:
+        for field in ["id", "title", "class", "year", "statement", "references"]:
             if field not in task:
                 errors.append(f"{p}.{field} is required")
 
@@ -74,6 +74,8 @@ def validate_tasks_dataset(data, errors):
             errors.append(f"{p}.title must be a non-empty string")
         if task.get("class") not in ALLOWED_CLASSES:
             errors.append(f"{p}.class must be one of {sorted(ALLOWED_CLASSES)}")
+        if not isinstance(task.get("year"), int) or not (1900 <= task["year"] <= 2100):
+            errors.append(f"{p}.year must be an integer in [1900, 2100]")
         if not isinstance(task.get("statement"), str) or not task.get("statement", "").strip():
             errors.append(f"{p}.statement must be a non-empty string")
 

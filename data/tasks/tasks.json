@@ -8,6 +8,7 @@
         "3DM"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given disjoint sets X, Y, Z and triples T subset of X x Y x Z, decide whether there is a matching of size q using pairwise disjoint triples.",
       "references": [
         {
@@ -23,6 +24,7 @@
         "3CNF-SAT"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a Boolean formula in 3-CNF, decide whether it is satisfiable.",
       "references": [
         {
@@ -38,6 +40,7 @@
         "4CNF-SAT"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a Boolean formula in 4-CNF, decide whether it is satisfiable.",
       "references": [
         {
@@ -53,6 +56,7 @@
         "Balanced Complete Bipartite Subgraph"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given bipartite graph G and integer k, decide whether G contains K_{k,k} as a subgraph.",
       "references": [
         {
@@ -68,6 +72,7 @@
         "Bin Packing (decision)"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given item sizes, bin capacity B, and integer k, decide whether all items can be packed into at most k bins.",
       "references": [
         {
@@ -83,6 +88,7 @@
         "Circuit Satisfiability"
       ],
       "class": "NP-complete",
+      "year": 1971,
       "statement": "Given a Boolean circuit C, decide whether there exists an input assignment that makes C output 1.",
       "references": [
         {
@@ -98,6 +104,7 @@
         "k-CLIQUE"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given an undirected graph G and integer k, decide whether G has a clique of size at least k.",
       "references": [
         {
@@ -113,6 +120,7 @@
         "Clique Cover"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given a graph G and integer k, decide whether vertices of G can be partitioned into at most k cliques.",
       "references": [
         {
@@ -128,6 +136,7 @@
         "Connected Dominating Set"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given a graph G and integer k, decide whether G has a connected dominating set of size at most k.",
       "references": [
         {
@@ -143,6 +152,7 @@
         "Connected Vertex Cover"
       ],
       "class": "NP-complete",
+      "year": 1983,
       "statement": "Given a graph G and integer k, decide whether G has a vertex cover of size at most k that induces a connected subgraph.",
       "references": [
         {
@@ -158,6 +168,7 @@
         "Crossing Number (decision)"
       ],
       "class": "NP-complete",
+      "year": 1983,
       "statement": "Given graph G and integer k, decide whether G can be drawn in the plane with at most k edge crossings.",
       "references": [
         {
@@ -173,6 +184,7 @@
         "Cutwidth Problem"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given graph G and integer k, decide whether vertices can be linearly ordered so every cut has at most k crossing edges.",
       "references": [
         {
@@ -188,6 +200,7 @@
         "DHC"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a directed graph G, decide whether G contains a directed Hamiltonian cycle.",
       "references": [
         {
@@ -203,6 +216,7 @@
         "DHP"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a directed graph G, decide whether G contains a directed Hamiltonian path.",
       "references": [
         {
@@ -218,6 +232,7 @@
         "Dominating Set"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given a graph G and integer k, decide whether G has a dominating set of size at most k.",
       "references": [
         {
@@ -233,6 +248,7 @@
         "Graph Edge Coloring (decision)"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given a graph G and integer k >= 3, decide whether edges of G can be properly colored with at most k colors.",
       "references": [
         {
@@ -248,6 +264,7 @@
         "Edge Dominating Set"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given a graph G and integer k, decide whether G has an edge dominating set of size at most k.",
       "references": [
         {
@@ -263,6 +280,7 @@
         "Exact Cover"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given universe U and family S of subsets, decide whether there exists a subfamily that covers each element of U exactly once.",
       "references": [
         {
@@ -279,6 +297,7 @@
         "Exact Satisfiability"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given a CNF formula, decide whether there exists an assignment such that each clause has exactly one true literal.",
       "references": [
         {
@@ -294,6 +313,7 @@
         "FAS"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a directed graph G and integer k, decide whether at most k arcs can be removed so the graph becomes acyclic.",
       "references": [
         {
@@ -309,6 +329,7 @@
         "FVS"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a graph G and integer k, decide whether one can delete at most k vertices so the remaining graph is acyclic.",
       "references": [
         {
@@ -324,6 +345,7 @@
         "Bandwidth Problem"
       ],
       "class": "NP-complete",
+      "year": 1976,
       "statement": "Given graph G and integer b, decide whether vertices can be labeled so each edge spans labels differing by at most b.",
       "references": [
         {
@@ -339,6 +361,7 @@
         "HC"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a graph G, decide whether G contains a Hamiltonian cycle.",
       "references": [
         {
@@ -354,6 +377,7 @@
         "HP"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a graph G, decide whether G contains a Hamiltonian path.",
       "references": [
         {
@@ -369,6 +393,7 @@
         "Hitting Set"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a universe U, family S of subsets, and integer k, decide whether there is a size-k subset of U intersecting every set in S.",
       "references": [
         {
@@ -384,6 +409,7 @@
         "0-1 ILP Feasibility"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given linear constraints over binary variables, decide whether there exists a 0-1 assignment satisfying all constraints.",
       "references": [
         {
@@ -399,6 +425,7 @@
         "Independent Set"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given an undirected graph G and integer k, decide whether G has an independent set of size at least k.",
       "references": [
         {
@@ -414,6 +441,7 @@
         "Job Shop Scheduling (decision)"
       ],
       "class": "NP-complete",
+      "year": 1976,
       "statement": "Given jobs with machine-specific operation orders and makespan bound B, decide whether a feasible schedule of length at most B exists.",
       "references": [
         {
@@ -430,6 +458,7 @@
         "3-COLORING"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a graph G and integer k >= 3, decide whether G is properly colorable with at most k colors.",
       "references": [
         {
@@ -445,6 +474,7 @@
         "0-1 Knapsack (decision)"
       ],
       "class": "NP-complete",
+      "year": 1974,
       "statement": "Given item weights and values plus bounds W and V, decide whether there exists a subset with total weight at most W and value at least V.",
       "references": [
         {
@@ -460,6 +490,7 @@
         "Linear Ordering Problem (decision)"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given a weighted directed graph and bound B, decide whether there is a vertex ordering with total forward weight at least B.",
       "references": [
         {
@@ -475,6 +506,7 @@
         "Longest Cycle (decision)"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given graph G and integer k, decide whether G contains a simple cycle of length at least k.",
       "references": [
         {
@@ -490,6 +522,7 @@
         "Longest Path (decision)"
       ],
       "class": "NP-complete",
+      "year": 1977,
       "statement": "Given a graph G and integer k, decide whether G has a simple path with at least k edges.",
       "references": [
         {
@@ -505,6 +538,7 @@
         "Maximum 2-SAT (decision)"
       ],
       "class": "NP-complete",
+      "year": 1976,
       "statement": "Given a 2-CNF formula and integer K, decide whether at least K clauses can be satisfied.",
       "references": [
         {
@@ -520,6 +554,7 @@
         "Max Cut (decision)"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a graph G and integer B, decide whether G has a cut with at least B crossing edges.",
       "references": [
         {
@@ -535,6 +570,7 @@
         "Maximum Satisfiability (decision)"
       ],
       "class": "NP-complete",
+      "year": 1973,
       "statement": "Given CNF formula phi and integer K, decide whether at least K clauses of phi can be satisfied simultaneously.",
       "references": [
         {
@@ -550,6 +586,7 @@
         "Minimum Fill-in"
       ],
       "class": "NP-complete",
+      "year": 1976,
       "statement": "Given graph G and integer k, decide whether at most k edges can be added to make G chordal.",
       "references": [
         {
@@ -565,6 +602,7 @@
         "Monotone Not-All-Equal 3SAT"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given a 3-CNF formula with only positive literals, decide whether each clause has at least one true and at least one false literal.",
       "references": [
         {
@@ -580,6 +618,7 @@
         "Monotone 1-in-3 SAT"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given a 3-CNF formula with only positive literals, decide whether each clause can have exactly one true literal.",
       "references": [
         {
@@ -595,6 +634,7 @@
         "Parallel Machine Scheduling (decision)"
       ],
       "class": "NP-complete",
+      "year": 1975,
       "statement": "Given processing times, number of identical machines m, and bound B, decide whether all jobs can be scheduled with makespan at most B.",
       "references": [
         {
@@ -610,6 +650,7 @@
         "Not-All-Equal 3SAT"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given a 3-CNF formula, decide whether there is an assignment where each clause has at least one true and at least one false literal.",
       "references": [
         {
@@ -625,6 +666,7 @@
         "1-in-3 SAT"
       ],
       "class": "NP-complete",
+      "year": 1978,
       "statement": "Given a 3-CNF formula, decide whether there exists an assignment making exactly one literal true in every clause.",
       "references": [
         {
@@ -640,6 +682,7 @@
         "Partition problem"
       ],
       "class": "NP-complete",
+      "year": 1973,
       "statement": "Given a multiset of positive integers, decide whether it can be partitioned into two subsets with equal sum.",
       "references": [
         {
@@ -655,6 +698,7 @@
         "Triangle Partition"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given graph G, decide whether vertices can be partitioned into disjoint triangles.",
       "references": [
         {
@@ -670,6 +714,7 @@
         "Pathwidth"
       ],
       "class": "NP-complete",
+      "year": 1987,
       "statement": "Given graph G and integer k, decide whether G has pathwidth at most k.",
       "references": [
         {
@@ -685,6 +730,7 @@
         "Planar 3-SAT"
       ],
       "class": "NP-complete",
+      "year": 1982,
       "statement": "Given a planar 3-CNF incidence structure, decide whether the formula is satisfiable.",
       "references": [
         {
@@ -700,6 +746,7 @@
         "Quadratic Assignment (decision)"
       ],
       "class": "NP-complete",
+      "year": 1976,
       "statement": "Given flow and distance matrices and bound B, decide whether an assignment of facilities to locations has total cost at most B.",
       "references": [
         {
@@ -716,6 +763,7 @@
         "Boolean Satisfiability"
       ],
       "class": "NP-complete",
+      "year": 1971,
       "statement": "Given a Boolean formula phi, decide whether phi is satisfiable.",
       "references": [
         {
@@ -731,6 +779,7 @@
         "Set Cover"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given universe U, family S of subsets of U, and integer k, decide whether there is a subfamily of size at most k covering U.",
       "references": [
         {
@@ -746,6 +795,7 @@
         "Set Packing"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a family of sets and integer k, decide whether there exist at least k pairwise disjoint sets.",
       "references": [
         {
@@ -761,6 +811,7 @@
         "Set Splitting"
       ],
       "class": "NP-complete",
+      "year": 1976,
       "statement": "Given universe U and family S of subsets, decide whether U can be partitioned into two parts so every set in S intersects both parts.",
       "references": [
         {
@@ -776,6 +827,7 @@
         "SCS (decision)"
       ],
       "class": "NP-complete",
+      "year": 1981,
       "statement": "Given a set of strings and integer L, decide whether there exists a common supersequence of length at most L.",
       "references": [
         {
@@ -791,6 +843,7 @@
         "Steiner Tree (decision)"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a weighted graph, terminal set R, and bound B, decide whether there is a tree spanning all terminals with total weight at most B.",
       "references": [
         {
@@ -806,6 +859,7 @@
         "Subgraph Isomorphism"
       ],
       "class": "NP-complete",
+      "year": 1973,
       "statement": "Given graphs G and H, decide whether G contains a subgraph isomorphic to H.",
       "references": [
         {
@@ -821,6 +875,7 @@
         "Subset Sum"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given integers a1..an and target T, decide whether some subset sums exactly to T.",
       "references": [
         {
@@ -836,6 +891,7 @@
         "3-Partition"
       ],
       "class": "NP-complete",
+      "year": 1975,
       "statement": "Given 3m integers and bound B, decide whether they can be partitioned into m triples each summing exactly to B.",
       "references": [
         {
@@ -851,6 +907,7 @@
         "Treewidth"
       ],
       "class": "NP-complete",
+      "year": 1987,
       "statement": "Given graph G and integer k, decide whether G has treewidth at most k.",
       "references": [
         {
@@ -866,6 +923,7 @@
         "Traveling Salesman Problem (decision)"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given a weighted complete graph and bound B, decide whether there is a tour of total weight at most B.",
       "references": [
         {
@@ -881,6 +939,7 @@
         "Vertex Cover"
       ],
       "class": "NP-complete",
+      "year": 1972,
       "statement": "Given an undirected graph G and integer k, decide whether G has a vertex cover of size at most k.",
       "references": [
         {
@@ -896,6 +955,7 @@
         "X3C"
       ],
       "class": "NP-complete",
+      "year": 1979,
       "statement": "Given a universe U with |U| = 3q and a family of 3-element subsets, decide whether there is an exact cover of U with q subsets.",
       "references": [
         {

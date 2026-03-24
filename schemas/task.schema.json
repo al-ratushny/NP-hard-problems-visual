@@ -15,7 +15,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "title", "class", "statement", "references"],
+        "required": ["id", "title", "class", "year", "statement", "references"],
         "properties": {
           "id": {
             "type": "string",
@@ -37,6 +37,11 @@
           "class": {
             "type": "string",
             "enum": ["P", "NP", "NP-complete", "NP-hard"]
+          },
+          "year": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2100
           },
           "statement": {
             "type": "string",

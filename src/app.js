@@ -32,6 +32,10 @@ const state = {
   query: "",
   sourceId: "",
   targetId: "",
+  layoutCache: {
+    key: "",
+    value: null,
+  },
 };
 
 const colorByClass = {
@@ -45,51 +49,7 @@ const VIEW_W = 1200;
 const VIEW_H = 760;
 const NODE_W = 182;
 const NODE_H = 56;
-const NODE_ROW_GAP = 30;
-const LAYER_GAP = 82;
 const NODE_LINE_HEIGHT = 13;
-const TASK_YEAR = {
-  circuit_sat: 1971,
-  sat: 1971,
-  "3sat": 1972,
-  clique: 1972,
-  independent_set: 1972,
-  vertex_cover: 1972,
-  hamiltonian_cycle: 1972,
-  hamiltonian_path: 1972,
-  tsp_decision: 1972,
-  subset_sum: 1972,
-  set_cover: 1972,
-  exact_cover: 1972,
-  k_colorability: 1972,
-  directed_hamiltonian_cycle: 1972,
-  directed_hamiltonian_path: 1972,
-  partition: 1973,
-  knapsack_decision: 1974,
-  feedback_vertex_set: 1972,
-  feedback_arc_set: 1972,
-  x3c: 1979,
-  "3dm": 1972,
-  dominating_set: 1979,
-  max_cut_decision: 1972,
-  set_packing: 1972,
-  hitting_set: 1972,
-  three_partition: 1975,
-  bin_packing_decision: 1978,
-  longest_path_decision: 1977,
-  clique_cover: 1979,
-  connected_dominating_set: 1979,
-  steiner_tree_decision: 1972,
-  ilp_feasibility_01: 1972,
-  nae_3sat: 1978,
-  planar_3sat: 1982,
-  one_in_three_sat: 1978,
-  edge_coloring_decision: 1979,
-  graph_bandwidth: 1976,
-  minimum_fill_in: 1976,
-  balanced_biclique: 1979,
-  partition_into_triangles: 1979,
-};
 
 const svg = document.getElementById("graphSvg");
 const detailsPanel = document.getElementById("detailsPanel");
@@ -160,7 +120,7 @@ function recalcVisible() {
 }
 
 function taskYear(task) {
-  return TASK_YEAR[task.id] || 1975;
+  return Number.isFinite(task.year) ? task.year : 1975;
 }
 
 function hashString(value) {
@@ -272,7 +232,18 @@ function buildCurvedEdgePath(p1, p2, offset = 0) {
   return { path, x1, y1, x2, y2 };
 }
 
-function yearLayout(visibleTasks) {
+function yearLayout(visibleTasks, visibleReductions) {
+  if (visibleTasks.length === 0) {
+    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: VIEW_H, yearColumns: [] };
+  }
+
+  const deg = new Map(visibleTasks.map((t) => [t.id, 0]));
+  for (const red of visibleReductions) {
+    if (!deg.has(red.from) || !deg.has(red.to)) continue;
+    deg.set(red.from, (deg.get(red.from) || 0) + 1);
+    deg.set(red.to, (deg.get(red.to) || 0) + 1);
+  }
+
   const byYear = new Map();
   for (const task of visibleTasks) {
     const y = taskYear(task);
@@ -281,135 +252,57 @@ function yearLayout(visibleTasks) {
   }
 
   const years = [...byYear.keys()].sort((a, b) => a - b);
-  const leftPad = 26;
-  const rightPad = 26;
-  const topPad = 22;
-  const bottomPad = 22;
-  const width = VIEW_W - leftPad - rightPad;
-  const maxPerRow = Math.max(1, Math.floor((width + NODE_ROW_GAP) / (NODE_W + NODE_ROW_GAP)));
-
-  const layers = years.map((year) => {
+  const leftPad = 66;
+  const rightPad = 66;
+  const topPad = 76;
+  const bottomPad = 32;
+  const rowGap = 16;
+  const yearStep = NODE_W + 74;
+  const viewWidth = Math.max(VIEW_W, leftPad + years.length * yearStep + rightPad);
+  const maxYearSize = Math.max(...years.map((year) => byYear.get(year).length));
+  const contentHeight = maxYearSize * NODE_H + Math.max(0, maxYearSize - 1) * rowGap;
+  const viewHeight = Math.max(VIEW_H, topPad + contentHeight + bottomPad);
+  const usableHeight = viewHeight - topPad - bottomPad;
+  const positions = new Map();
+  const yearColumns = [];
+  for (let yi = 0; yi < years.length; yi += 1) {
+    const year = years[yi];
     const tasks = byYear
       .get(year)
       .slice()
       .sort((a, b) => {
-        const ca = jitter(`order:${year}:${a.id}`, 1);
-        const cb = jitter(`order:${year}:${b.id}`, 1);
-        if (Math.abs(ca - cb) > 0.18) return ca - cb;
+        const da = deg.get(a.id) || 0;
+        const db = deg.get(b.id) || 0;
+        if (da !== db) return db - da;
         return a.title.localeCompare(b.title);
       });
-    const rowCount = Math.ceil(tasks.length / maxPerRow);
-    const layerHeight = rowCount * NODE_H + (rowCount - 1) * NODE_ROW_GAP;
-    return { tasks, rowCount, layerHeight };
-  });
-
-  const totalLayerHeight =
-    layers.reduce((acc, layer) => acc + layer.layerHeight, 0) + (layers.length - 1) * LAYER_GAP;
-  const viewHeight = Math.max(VIEW_H, topPad + totalLayerHeight + bottomPad);
-
-  const positions = new Map();
-  let currentY = topPad;
-  for (const layer of layers) {
-    const layerTop = currentY;
-    for (let row = 0; row < layer.rowCount; row += 1) {
-      const start = row * maxPerRow;
-      const rowTasks = layer.tasks.slice(start, start + maxPerRow);
-      const rowY =
-        layerTop + row * (NODE_H + NODE_ROW_GAP) + NODE_H / 2 + jitter(`row-y:${currentY}:${row}`, 7);
-      const rowCount = rowTasks.length;
-      const rowWidth = rowCount * NODE_W + (rowCount - 1) * NODE_ROW_GAP;
-      const rowShift = jitter(`row-x:${currentY}:${row}`, 48);
-      const startX = leftPad + (width - rowWidth) / 2 + NODE_W / 2 + rowShift;
-      for (let i = 0; i < rowTasks.length; i += 1) {
-        const task = rowTasks[i];
-        const baseX = startX + i * (NODE_W + NODE_ROW_GAP);
-        const zigzag = i % 2 === 0 ? -10 : 10;
-        const chaosX = jitter(`node-x:${task.id}`, 24) + zigzag;
-        const chaosY = jitter(`node-y:${task.id}`, 8);
-        const x = Math.max(leftPad + NODE_W / 2, Math.min(VIEW_W - rightPad - NODE_W / 2, baseX + chaosX));
-        positions.set(task.id, { x, y: rowY + chaosY });
-      }
-    }
-    currentY += layer.layerHeight + LAYER_GAP;
-  }
-
-  return { positions, viewHeight };
-}
-
-function satDepthLayout(visibleTasks, visibleReductions) {
-  if (visibleTasks.length === 0) {
-    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: VIEW_H };
-  }
-
-  const taskById = new Map(visibleTasks.map((t) => [t.id, t]));
-  const out = new Map(visibleTasks.map((t) => [t.id, []]));
-  const deg = new Map(visibleTasks.map((t) => [t.id, 0]));
-  for (const red of visibleReductions) {
-    if (!taskById.has(red.from) || !taskById.has(red.to)) continue;
-    out.get(red.from).push(red.to);
-    deg.set(red.from, (deg.get(red.from) || 0) + 1);
-    deg.set(red.to, (deg.get(red.to) || 0) + 1);
-  }
-
-  const rootId = taskById.has("sat") ? "sat" : visibleTasks[0].id;
-  const depth = new Map(visibleTasks.map((t) => [t.id, Number.POSITIVE_INFINITY]));
-  depth.set(rootId, 0);
-  const queue = [rootId];
-
-  while (queue.length > 0) {
-    const cur = queue.shift();
-    const d = depth.get(cur);
-    for (const nxt of out.get(cur) || []) {
-      if (depth.get(nxt) !== Number.POSITIVE_INFINITY) continue;
-      depth.set(nxt, d + 1);
-      queue.push(nxt);
-    }
-  }
-
-  const finiteDepths = [...depth.values()].filter(Number.isFinite);
-  const maxReached = finiteDepths.length > 0 ? Math.max(...finiteDepths) : 0;
-  for (const task of visibleTasks) {
-    if (!Number.isFinite(depth.get(task.id))) depth.set(task.id, maxReached + 1);
-  }
-
-  const byDepth = new Map();
-  for (const task of visibleTasks) {
-    const d = depth.get(task.id) || 0;
-    if (!byDepth.has(d)) byDepth.set(d, []);
-    byDepth.get(d).push(task);
-  }
-
-  const leftPad = 36;
-  const rightPad = 36;
-  const topPad = 28;
-  const bottomPad = 28;
-  const layerStep = NODE_W + 84;
-  const rowGap = 18;
-  const maxDepth = Math.max(...byDepth.keys());
-  const viewWidth = Math.max(VIEW_W, leftPad + (maxDepth + 1) * layerStep + rightPad);
-
-  const maxLayerSize = Math.max(...[...byDepth.values()].map((tasks) => tasks.length));
-  const contentHeight = maxLayerSize * NODE_H + Math.max(0, maxLayerSize - 1) * rowGap;
-  const viewHeight = Math.max(VIEW_H, topPad + contentHeight + bottomPad);
-  const usableHeight = viewHeight - topPad - bottomPad;
-  const positions = new Map();
-  for (const [d, tasks] of [...byDepth.entries()].sort((a, b) => a[0] - b[0])) {
-    tasks.sort((a, b) => {
-      const da = deg.get(a.id) || 0;
-      const db = deg.get(b.id) || 0;
-      if (da !== db) return db - da;
-      return a.title.localeCompare(b.title);
-    });
-    const x = leftPad + d * layerStep + NODE_W / 2;
+    const x = leftPad + yi * yearStep + NODE_W / 2;
     const columnHeight = tasks.length * NODE_H + Math.max(0, tasks.length - 1) * rowGap;
     const startY = topPad + Math.max(0, (usableHeight - columnHeight) / 2) + NODE_H / 2;
     for (let i = 0; i < tasks.length; i += 1) {
       const y = startY + i * (NODE_H + rowGap);
       positions.set(tasks[i].id, { x, y });
     }
+    yearColumns.push({ year, x });
   }
 
-  return { positions, viewWidth, viewHeight };
+  return { positions, viewWidth, viewHeight, yearColumns };
+}
+
+function layoutCacheKey(visibleTasks, visibleReductions) {
+  const taskPart = visibleTasks.map((t) => t.id).join(",");
+  const edgePart = visibleReductions.map((r) => r.id).join(",");
+  return `${taskPart}|${edgePart}`;
+}
+
+function getYearLayoutCached(visibleTasks, visibleReductions) {
+  const key = layoutCacheKey(visibleTasks, visibleReductions);
+  if (state.layoutCache.key === key && state.layoutCache.value) {
+    return state.layoutCache.value;
+  }
+  const layout = yearLayout(visibleTasks, visibleReductions);
+  state.layoutCache = { key, value: layout };
+  return layout;
 }
 
 function clearSvg() {
@@ -493,7 +386,11 @@ function drawGraph() {
     (r) => visibleTaskIds.has(r.from) && visibleTaskIds.has(r.to),
   );
 
-  const { positions: pos, viewWidth, viewHeight } = satDepthLayout(visibleTasks, visibleReductions);
+  const { positions: basePos, viewWidth, viewHeight, yearColumns } = getYearLayoutCached(
+    visibleTasks,
+    visibleReductions,
+  );
+  const pos = new Map(basePos);
   for (const [taskId, offset] of state.nodeOffsets.entries()) {
     const base = pos.get(taskId);
     if (!base || !offset) continue;
@@ -506,27 +403,6 @@ function drawGraph() {
 
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
   svg.appendChild(defs);
-  const sketchFilter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
-  sketchFilter.setAttribute("id", "sketch-filter");
-  sketchFilter.setAttribute("x", "-10%");
-  sketchFilter.setAttribute("y", "-10%");
-  sketchFilter.setAttribute("width", "120%");
-  sketchFilter.setAttribute("height", "120%");
-  const noise = document.createElementNS("http://www.w3.org/2000/svg", "feTurbulence");
-  noise.setAttribute("type", "fractalNoise");
-  noise.setAttribute("baseFrequency", "0.9");
-  noise.setAttribute("numOctaves", "1");
-  noise.setAttribute("seed", "7");
-  noise.setAttribute("result", "noise");
-  sketchFilter.appendChild(noise);
-  const wobble = document.createElementNS("http://www.w3.org/2000/svg", "feDisplacementMap");
-  wobble.setAttribute("in", "SourceGraphic");
-  wobble.setAttribute("in2", "noise");
-  wobble.setAttribute("scale", "0.8");
-  wobble.setAttribute("xChannelSelector", "R");
-  wobble.setAttribute("yChannelSelector", "G");
-  sketchFilter.appendChild(wobble);
-  defs.appendChild(sketchFilter);
   const nodeGradientByClass = new Map();
   for (const [klass, base] of Object.entries(colorByClass)) {
     const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
@@ -556,6 +432,27 @@ function drawGraph() {
   const viewportGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
   viewportGroup.setAttribute("id", VIEWPORT_GROUP_ID);
   svg.appendChild(viewportGroup);
+
+  const yearsGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  yearsGroup.classList.add("year-guides");
+  viewportGroup.appendChild(yearsGroup);
+  for (const column of yearColumns || []) {
+    const guide = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    guide.setAttribute("x1", String(column.x));
+    guide.setAttribute("x2", String(column.x));
+    guide.setAttribute("y1", "8");
+    guide.setAttribute("y2", String(viewHeight - 8));
+    guide.classList.add("year-guide-line");
+    yearsGroup.appendChild(guide);
+
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    label.setAttribute("x", String(column.x));
+    label.setAttribute("y", "20");
+    label.setAttribute("text-anchor", "middle");
+    label.classList.add("year-guide-label");
+    label.textContent = String(column.year);
+    yearsGroup.appendChild(label);
+  }
 
   const edgesGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
   viewportGroup.appendChild(edgesGroup);
@@ -592,8 +489,6 @@ function drawGraph() {
   for (const task of visibleTasks) {
     const p = pos.get(task.id);
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    const tilt = jitter(`tilt:${task.id}`, 1.1);
-    group.setAttribute("transform", `rotate(${tilt} ${p.x} ${p.y})`);
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("x", String(p.x - NODE_W / 2));
     rect.setAttribute("y", String(p.y - NODE_H / 2));
@@ -604,7 +499,6 @@ function drawGraph() {
     const nodeGradId = nodeGradientByClass.get(task.class);
     rect.setAttribute("fill", nodeGradId ? `url(#${nodeGradId})` : colorByClass[task.class] || "#b0beca");
     rect.classList.add("node-block");
-    rect.setAttribute("filter", "url(#sketch-filter)");
     if (state.selectedTaskId === task.id) rect.classList.add("selected-node");
     if (highlight.active) {
       if (highlight.nodes.has(task.id)) rect.classList.add("node-highlight");
@@ -695,7 +589,7 @@ function renderDetails() {
       .join("");
     detailsPanel.innerHTML = `
       <h3>${escapeHtml(task.title)}</h3>
-      <div class="meta">${escapeHtml(task.id)} | ${escapeHtml(task.class)}</div>
+      <div class="meta">${escapeHtml(task.id)} | ${escapeHtml(task.class)} | ${escapeHtml(String(taskYear(task)))}</div>
       <p>${escapeHtml(task.statement)}</p>
       <strong>References</strong>
       <ul>${references}</ul>
