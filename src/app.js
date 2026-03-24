@@ -245,8 +245,18 @@ function buildCurvedEdgePath(p1, p2, offset = 0) {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
   const len = Math.hypot(dx, dy) || 1;
-  const startPad = Math.min(NODE_H / 2, len / 3);
-  const endPad = Math.min(NODE_H / 2 + 2, len / 3);
+  const ux = dx / len;
+  const uy = dy / len;
+  const exitPad = (vx, vy) =>
+    Math.min(
+      len / 3,
+      Math.min(
+        (NODE_W / 2) / Math.max(Math.abs(vx), 0.0001),
+        (NODE_H / 2) / Math.max(Math.abs(vy), 0.0001),
+      ),
+    );
+  const startPad = exitPad(ux, uy);
+  const endPad = exitPad(ux, uy) + 2;
   const x1 = p1.x + (dx / len) * startPad;
   const y1 = p1.y + (dy / len) * startPad;
   const x2 = p2.x - (dx / len) * endPad;
@@ -328,7 +338,7 @@ function yearLayout(visibleTasks) {
 
 function satDepthLayout(visibleTasks, visibleReductions) {
   if (visibleTasks.length === 0) {
-    return { positions: new Map(), viewHeight: VIEW_H };
+    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: VIEW_H };
   }
 
   const taskById = new Map(visibleTasks.map((t) => [t.id, t]));
@@ -369,15 +379,19 @@ function satDepthLayout(visibleTasks, visibleReductions) {
     byDepth.get(d).push(task);
   }
 
+  const leftPad = 36;
+  const rightPad = 36;
   const topPad = 28;
   const bottomPad = 28;
-  const layerStep = NODE_H + 70;
+  const layerStep = NODE_W + 84;
+  const rowGap = 18;
   const maxDepth = Math.max(...byDepth.keys());
-  const viewHeight = Math.max(VIEW_H, topPad + (maxDepth + 1) * layerStep + bottomPad);
+  const viewWidth = Math.max(VIEW_W, leftPad + (maxDepth + 1) * layerStep + rightPad);
 
-  const leftPad = 30;
-  const rightPad = 30;
-  const width = VIEW_W - leftPad - rightPad;
+  const maxLayerSize = Math.max(...[...byDepth.values()].map((tasks) => tasks.length));
+  const contentHeight = maxLayerSize * NODE_H + Math.max(0, maxLayerSize - 1) * rowGap;
+  const viewHeight = Math.max(VIEW_H, topPad + contentHeight + bottomPad);
+  const usableHeight = viewHeight - topPad - bottomPad;
   const positions = new Map();
   for (const [d, tasks] of [...byDepth.entries()].sort((a, b) => a[0] - b[0])) {
     tasks.sort((a, b) => {
@@ -386,17 +400,16 @@ function satDepthLayout(visibleTasks, visibleReductions) {
       if (da !== db) return db - da;
       return a.title.localeCompare(b.title);
     });
-    const y = topPad + d * layerStep + NODE_H / 2;
-    const gap = 16;
-    const rowW = tasks.length * NODE_W + (tasks.length - 1) * gap;
-    const startX = leftPad + Math.max(0, (width - rowW) / 2) + NODE_W / 2;
+    const x = leftPad + d * layerStep + NODE_W / 2;
+    const columnHeight = tasks.length * NODE_H + Math.max(0, tasks.length - 1) * rowGap;
+    const startY = topPad + Math.max(0, (usableHeight - columnHeight) / 2) + NODE_H / 2;
     for (let i = 0; i < tasks.length; i += 1) {
-      const x = startX + i * (NODE_W + gap);
+      const y = startY + i * (NODE_H + rowGap);
       positions.set(tasks[i].id, { x, y });
     }
   }
 
-  return { positions, viewHeight };
+  return { positions, viewWidth, viewHeight };
 }
 
 function clearSvg() {
@@ -480,13 +493,13 @@ function drawGraph() {
     (r) => visibleTaskIds.has(r.from) && visibleTaskIds.has(r.to),
   );
 
-  const { positions: pos, viewHeight } = satDepthLayout(visibleTasks, visibleReductions);
+  const { positions: pos, viewWidth, viewHeight } = satDepthLayout(visibleTasks, visibleReductions);
   for (const [taskId, offset] of state.nodeOffsets.entries()) {
     const base = pos.get(taskId);
     if (!base || !offset) continue;
     pos.set(taskId, { x: base.x + offset.dx, y: base.y + offset.dy });
   }
-  svg.setAttribute("viewBox", `0 0 ${VIEW_W} ${viewHeight}`);
+  svg.setAttribute("viewBox", `0 0 ${viewWidth} ${viewHeight}`);
   svg.style.height = `${Math.max(680, viewHeight)}px`;
   const highlight = buildHighlightSets();
   const edgeOffsets = buildEdgeBundleOffsets(visibleReductions, pos);

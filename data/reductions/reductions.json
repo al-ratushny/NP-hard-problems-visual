@@ -275,6 +275,19 @@
       ]
     },
     {
+      "id": "clique_to_subgraph_isomorphism",
+      "from": "clique",
+      "to": "subgraph_isomorphism",
+      "type": "karp",
+      "idea": "Ask whether G contains K_k as a subgraph; this is exactly a clique query encoded as subgraph isomorphism.",
+      "references": [
+        {
+          "label": "Subgraph isomorphism and clique",
+          "url": "https://en.wikipedia.org/wiki/Subgraph_isomorphism_problem"
+        }
+      ]
+    },
+    {
       "id": "clique_to_vertex_cover",
       "from": "clique",
       "to": "vertex_cover",
@@ -366,6 +379,32 @@
       ]
     },
     {
+      "id": "feedback_arc_set_to_linear_ordering_decision",
+      "from": "feedback_arc_set",
+      "to": "linear_ordering_decision",
+      "type": "karp",
+      "idea": "Selecting a maximum acyclic subgraph order corresponds to maximizing forward arcs in a linear ordering objective.",
+      "references": [
+        {
+          "label": "Linear ordering and acyclic subgraph",
+          "url": "https://en.wikipedia.org/wiki/Linear_ordering_problem"
+        }
+      ]
+    },
+    {
+      "id": "graph_bandwidth_to_cutwidth",
+      "from": "graph_bandwidth",
+      "to": "cutwidth",
+      "type": "karp",
+      "idea": "Use standard linear-layout gadget conversion so bounded bandwidth instances map to bounded cutwidth instances.",
+      "references": [
+        {
+          "label": "Cutwidth complexity",
+          "url": "https://en.wikipedia.org/wiki/Cutwidth"
+        }
+      ]
+    },
+    {
       "id": "hamiltonian_cycle_to_directed_hamiltonian_cycle",
       "from": "hamiltonian_cycle",
       "to": "directed_hamiltonian_cycle",
@@ -400,6 +439,19 @@
       "references": [
         {
           "label": "Hamiltonian path problem",
+          "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_cycle_to_longest_cycle_decision",
+      "from": "hamiltonian_cycle",
+      "to": "longest_cycle_decision",
+      "type": "karp",
+      "idea": "Set k equal to number of vertices n; a cycle of length at least n exists iff the graph is Hamiltonian.",
+      "references": [
+        {
+          "label": "Hamiltonian cycle relation",
           "url": "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
         }
       ]
@@ -453,6 +505,19 @@
         {
           "label": "hamiltonian_path to longest_path_decision",
           "url": "https://en.wikipedia.org/wiki/Longest_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "hamiltonian_path_to_shortest_common_supersequence_decision",
+      "from": "hamiltonian_path",
+      "to": "shortest_common_supersequence_decision",
+      "type": "karp",
+      "idea": "Encode adjacency constraints as strings so a short common supersequence exists iff a Hamiltonian traversal ordering exists.",
+      "references": [
+        {
+          "label": "SCS NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Shortest_common_supersequence_problem"
         }
       ]
     },
@@ -613,6 +678,32 @@
       ]
     },
     {
+      "id": "minimum_fill_in_to_treewidth_decision",
+      "from": "minimum_fill_in",
+      "to": "treewidth_decision",
+      "type": "karp",
+      "idea": "Translate fill-edge budget into an elimination ordering bound, yielding an equivalent bounded-treewidth instance.",
+      "references": [
+        {
+          "label": "Treewidth and chordal completion",
+          "url": "https://en.wikipedia.org/wiki/Treewidth"
+        }
+      ]
+    },
+    {
+      "id": "nae_3sat_to_monotone_nae_3sat",
+      "from": "nae_3sat",
+      "to": "monotone_nae_3sat",
+      "type": "karp",
+      "idea": "Replace negated literals with gadget variables and consistency clauses to obtain an equivalent monotone NAE instance.",
+      "references": [
+        {
+          "label": "Monotone NAE-3SAT",
+          "url": "https://en.wikipedia.org/wiki/Not-all-equal_3-satisfiability"
+        }
+      ]
+    },
+    {
       "id": "nae_3sat_to_one_in_three_sat",
       "from": "nae_3sat",
       "to": "one_in_three_sat",
@@ -626,6 +717,45 @@
       ]
     },
     {
+      "id": "nae_3sat_to_set_splitting",
+      "from": "nae_3sat",
+      "to": "set_splitting",
+      "type": "karp",
+      "idea": "Interpret clause literals as set-membership constraints so not-all-equal satisfaction matches bipartition splitting of every set.",
+      "references": [
+        {
+          "label": "Set splitting NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Set_splitting_problem"
+        }
+      ]
+    },
+    {
+      "id": "one_in_three_sat_to_exact_sat",
+      "from": "one_in_three_sat",
+      "to": "exact_sat",
+      "type": "karp",
+      "idea": "1-in-3 SAT is a direct restricted form of exact satisfiability with exactly one true literal per clause.",
+      "references": [
+        {
+          "label": "Exact satisfiability",
+          "url": "https://en.wikipedia.org/wiki/Exact_satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "one_in_three_sat_to_monotone_one_in_three_sat",
+      "from": "one_in_three_sat",
+      "to": "monotone_one_in_three_sat",
+      "type": "karp",
+      "idea": "Replace negated literals by variable gadgets and consistency constraints to obtain an equivalent monotone exact-one formula.",
+      "references": [
+        {
+          "label": "Monotone 1-in-3 SAT",
+          "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
       "id": "one_in_three_sat_to_nae_3sat",
       "from": "one_in_three_sat",
       "to": "nae_3sat",
@@ -635,6 +765,19 @@
         {
           "label": "one_in_three_sat to nae_3sat",
           "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
+      "id": "partition_to_multiprocessor_scheduling_decision",
+      "from": "partition",
+      "to": "multiprocessor_scheduling_decision",
+      "type": "karp",
+      "idea": "Use two-machine makespan bound B = sum/2 so feasible balanced scheduling is equivalent to partition.",
+      "references": [
+        {
+          "label": "Partition and scheduling relation",
+          "url": "https://en.wikipedia.org/wiki/Partition_problem"
         }
       ]
     },
@@ -691,6 +834,19 @@
       ]
     },
     {
+      "id": "sat_to_4sat",
+      "from": "sat",
+      "to": "4sat",
+      "type": "karp",
+      "idea": "Convert clauses to bounded-size form and pad to length 4 with auxiliary variables while preserving satisfiability.",
+      "references": [
+        {
+          "label": "k-satisfiability",
+          "url": "https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#k-satisfiability"
+        }
+      ]
+    },
+    {
       "id": "sat_to_clique",
       "from": "sat",
       "to": "clique",
@@ -700,6 +856,19 @@
         {
           "label": "Clique problem and SAT reduction",
           "url": "https://en.wikipedia.org/wiki/Clique_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_crossing_number_decision",
+      "from": "sat",
+      "to": "crossing_number_decision",
+      "type": "karp",
+      "idea": "Build variable-clause drawing gadgets where satisfiable formulas correspond to embeddings with crossing count at most k.",
+      "references": [
+        {
+          "label": "Crossing number NP-completeness",
+          "url": "https://en.wikipedia.org/wiki/Crossing_number_(graph_theory)"
         }
       ]
     },
@@ -795,6 +964,32 @@
       ]
     },
     {
+      "id": "sat_to_max_2sat_decision",
+      "from": "sat",
+      "to": "max_2sat_decision",
+      "type": "karp",
+      "idea": "Use clause-splitting gadgets and a threshold K so all constraints are satisfiable iff the original SAT instance is satisfiable.",
+      "references": [
+        {
+          "label": "MAX-2SAT",
+          "url": "https://en.wikipedia.org/wiki/Maximum_satisfiability_problem"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_max_sat_decision",
+      "from": "sat",
+      "to": "max_sat_decision",
+      "type": "karp",
+      "idea": "Keep the same CNF instance and set K to the number of clauses; meeting the threshold is equivalent to satisfiability.",
+      "references": [
+        {
+          "label": "Maximum satisfiability problem",
+          "url": "https://en.wikipedia.org/wiki/Maximum_satisfiability_problem"
+        }
+      ]
+    },
+    {
       "id": "sat_to_minimum_fill_in",
       "from": "sat",
       "to": "minimum_fill_in",
@@ -847,6 +1042,19 @@
       ]
     },
     {
+      "id": "sat_to_pathwidth_decision",
+      "from": "sat",
+      "to": "pathwidth_decision",
+      "type": "karp",
+      "idea": "Use SAT gadgets that force a low-width path decomposition exactly when a satisfying assignment exists.",
+      "references": [
+        {
+          "label": "Pathwidth complexity",
+          "url": "https://en.wikipedia.org/wiki/Pathwidth"
+        }
+      ]
+    },
+    {
       "id": "sat_to_planar_3sat",
       "from": "sat",
       "to": "planar_3sat",
@@ -856,6 +1064,19 @@
         {
           "label": "sat to planar_3sat",
           "url": "https://en.wikipedia.org/wiki/Planar_SAT"
+        }
+      ]
+    },
+    {
+      "id": "sat_to_quadratic_assignment_decision",
+      "from": "sat",
+      "to": "quadratic_assignment_decision",
+      "type": "karp",
+      "idea": "Encode variable choices and clause penalties into flow-distance costs so low-cost assignments correspond to satisfying valuations.",
+      "references": [
+        {
+          "label": "Quadratic assignment problem",
+          "url": "https://en.wikipedia.org/wiki/Quadratic_assignment_problem"
         }
       ]
     },
@@ -1068,6 +1289,19 @@
       ]
     },
     {
+      "id": "three_partition_to_job_shop_scheduling_decision",
+      "from": "three_partition",
+      "to": "job_shop_scheduling_decision",
+      "type": "karp",
+      "idea": "Encode each item as operations so a bounded makespan schedule exists iff items can be grouped into equal-sum triples.",
+      "references": [
+        {
+          "label": "Job shop scheduling complexity",
+          "url": "https://en.wikipedia.org/wiki/Job_shop_scheduling"
+        }
+      ]
+    },
+    {
       "id": "three_partition_to_partition_into_triangles",
       "from": "three_partition",
       "to": "partition_into_triangles",
@@ -1129,6 +1363,32 @@
         {
           "label": "vertex_cover to connected_dominating_set",
           "url": "https://en.wikipedia.org/wiki/Dominating_set"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_connected_vertex_cover",
+      "from": "vertex_cover",
+      "to": "connected_vertex_cover",
+      "type": "karp",
+      "idea": "Attach connector gadgets that force any feasible cover to be connected while preserving the original cover choice.",
+      "references": [
+        {
+          "label": "Connected vertex cover",
+          "url": "https://en.wikipedia.org/wiki/Connected_vertex_cover"
+        }
+      ]
+    },
+    {
+      "id": "vertex_cover_to_edge_dominating_set",
+      "from": "vertex_cover",
+      "to": "edge_dominating_set",
+      "type": "karp",
+      "idea": "Map vertex selection constraints to edge-incidence gadgets so small vertex covers correspond to small edge dominating sets.",
+      "references": [
+        {
+          "label": "Edge dominating set",
+          "url": "https://en.wikipedia.org/wiki/Edge_dominating_set"
         }
       ]
     },

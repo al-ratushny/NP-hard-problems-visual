@@ -32,6 +32,21 @@
       ]
     },
     {
+      "id": "4sat",
+      "title": "4-SAT",
+      "aliases": [
+        "4CNF-SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a Boolean formula in 4-CNF, decide whether it is satisfiable.",
+      "references": [
+        {
+          "label": "k-satisfiability",
+          "url": "https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#k-satisfiability"
+        }
+      ]
+    },
+    {
       "id": "balanced_biclique",
       "title": "BALANCED-BICLIQUE",
       "aliases": [
@@ -122,6 +137,51 @@
       ]
     },
     {
+      "id": "connected_vertex_cover",
+      "title": "CONNECTED-VERTEX-COVER",
+      "aliases": [
+        "Connected Vertex Cover"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether G has a vertex cover of size at most k that induces a connected subgraph.",
+      "references": [
+        {
+          "label": "Connected vertex cover",
+          "url": "https://en.wikipedia.org/wiki/Connected_vertex_cover"
+        }
+      ]
+    },
+    {
+      "id": "crossing_number_decision",
+      "title": "CROSSING-NUMBER (decision)",
+      "aliases": [
+        "Crossing Number (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer k, decide whether G can be drawn in the plane with at most k edge crossings.",
+      "references": [
+        {
+          "label": "Crossing number",
+          "url": "https://en.wikipedia.org/wiki/Crossing_number_(graph_theory)"
+        }
+      ]
+    },
+    {
+      "id": "cutwidth",
+      "title": "CUTWIDTH",
+      "aliases": [
+        "Cutwidth Problem"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer k, decide whether vertices can be linearly ordered so every cut has at most k crossing edges.",
+      "references": [
+        {
+          "label": "Cutwidth",
+          "url": "https://en.wikipedia.org/wiki/Cutwidth"
+        }
+      ]
+    },
+    {
       "id": "directed_hamiltonian_cycle",
       "title": "DIRECTED-HAMILTONIAN-CYCLE",
       "aliases": [
@@ -182,6 +242,21 @@
       ]
     },
     {
+      "id": "edge_dominating_set",
+      "title": "EDGE-DOMINATING-SET",
+      "aliases": [
+        "Edge Dominating Set"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a graph G and integer k, decide whether G has an edge dominating set of size at most k.",
+      "references": [
+        {
+          "label": "Edge dominating set",
+          "url": "https://en.wikipedia.org/wiki/Edge_dominating_set"
+        }
+      ]
+    },
+    {
       "id": "exact_cover",
       "title": "EXACT-COVER",
       "aliases": [
@@ -193,6 +268,22 @@
         {
           "label": "Exact cover",
           "url": "https://en.wikipedia.org/wiki/Exact_cover"
+        }
+      ]
+    },
+    {
+      "id": "exact_sat",
+      "title": "EXACT-SAT",
+      "aliases": [
+        "XSAT",
+        "Exact Satisfiability"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a CNF formula, decide whether there exists an assignment such that each clause has exactly one true literal.",
+      "references": [
+        {
+          "label": "Exact satisfiability",
+          "url": "https://en.wikipedia.org/wiki/Exact_satisfiability"
         }
       ]
     },
@@ -317,6 +408,21 @@
       ]
     },
     {
+      "id": "job_shop_scheduling_decision",
+      "title": "JOB-SHOP-SCHEDULING (decision)",
+      "aliases": [
+        "Job Shop Scheduling (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given jobs with machine-specific operation orders and makespan bound B, decide whether a feasible schedule of length at most B exists.",
+      "references": [
+        {
+          "label": "Job shop scheduling",
+          "url": "https://en.wikipedia.org/wiki/Job_shop_scheduling"
+        }
+      ]
+    },
+    {
       "id": "k_colorability",
       "title": "k-COLORABILITY",
       "aliases": [
@@ -348,6 +454,36 @@
       ]
     },
     {
+      "id": "linear_ordering_decision",
+      "title": "LINEAR-ORDERING (decision)",
+      "aliases": [
+        "Linear Ordering Problem (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a weighted directed graph and bound B, decide whether there is a vertex ordering with total forward weight at least B.",
+      "references": [
+        {
+          "label": "Linear ordering problem",
+          "url": "https://en.wikipedia.org/wiki/Linear_ordering_problem"
+        }
+      ]
+    },
+    {
+      "id": "longest_cycle_decision",
+      "title": "LONGEST-CYCLE (decision)",
+      "aliases": [
+        "Longest Cycle (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer k, decide whether G contains a simple cycle of length at least k.",
+      "references": [
+        {
+          "label": "LONGEST-CYCLE (decision)",
+          "url": "https://en.wikipedia.org/wiki/List_of_NP-complete_problems"
+        }
+      ]
+    },
+    {
       "id": "longest_path_decision",
       "title": "LONGEST-PATH (decision)",
       "aliases": [
@@ -359,6 +495,21 @@
         {
           "label": "LONGEST-PATH (decision)",
           "url": "https://en.wikipedia.org/wiki/Longest_path_problem"
+        }
+      ]
+    },
+    {
+      "id": "max_2sat_decision",
+      "title": "MAX-2SAT (decision)",
+      "aliases": [
+        "Maximum 2-SAT (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a 2-CNF formula and integer K, decide whether at least K clauses can be satisfied.",
+      "references": [
+        {
+          "label": "Maximum satisfiability problem",
+          "url": "https://en.wikipedia.org/wiki/Maximum_satisfiability_problem"
         }
       ]
     },
@@ -378,6 +529,21 @@
       ]
     },
     {
+      "id": "max_sat_decision",
+      "title": "MAX-SAT (decision)",
+      "aliases": [
+        "Maximum Satisfiability (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given CNF formula phi and integer K, decide whether at least K clauses of phi can be satisfied simultaneously.",
+      "references": [
+        {
+          "label": "Maximum satisfiability problem",
+          "url": "https://en.wikipedia.org/wiki/Maximum_satisfiability_problem"
+        }
+      ]
+    },
+    {
       "id": "minimum_fill_in",
       "title": "MINIMUM-FILL-IN",
       "aliases": [
@@ -389,6 +555,51 @@
         {
           "label": "MINIMUM-FILL-IN",
           "url": "https://en.wikipedia.org/wiki/Chordal_graph"
+        }
+      ]
+    },
+    {
+      "id": "monotone_nae_3sat",
+      "title": "MONOTONE-NAE-3SAT",
+      "aliases": [
+        "Monotone Not-All-Equal 3SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a 3-CNF formula with only positive literals, decide whether each clause has at least one true and at least one false literal.",
+      "references": [
+        {
+          "label": "Not-all-equal 3-satisfiability",
+          "url": "https://en.wikipedia.org/wiki/Not-all-equal_3-satisfiability"
+        }
+      ]
+    },
+    {
+      "id": "monotone_one_in_three_sat",
+      "title": "MONOTONE-ONE-IN-THREE-SAT",
+      "aliases": [
+        "Monotone 1-in-3 SAT"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a 3-CNF formula with only positive literals, decide whether each clause can have exactly one true literal.",
+      "references": [
+        {
+          "label": "Monotone 1-in-3 SAT",
+          "url": "https://en.wikipedia.org/wiki/1-in-3-SAT"
+        }
+      ]
+    },
+    {
+      "id": "multiprocessor_scheduling_decision",
+      "title": "MULTIPROCESSOR-SCHEDULING (decision)",
+      "aliases": [
+        "Parallel Machine Scheduling (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given processing times, number of identical machines m, and bound B, decide whether all jobs can be scheduled with makespan at most B.",
+      "references": [
+        {
+          "label": "Multiprocessor scheduling",
+          "url": "https://en.wikipedia.org/wiki/Multiprocessor_scheduling"
         }
       ]
     },
@@ -453,6 +664,21 @@
       ]
     },
     {
+      "id": "pathwidth_decision",
+      "title": "PATHWIDTH (decision)",
+      "aliases": [
+        "Pathwidth"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer k, decide whether G has pathwidth at most k.",
+      "references": [
+        {
+          "label": "Pathwidth",
+          "url": "https://en.wikipedia.org/wiki/Pathwidth"
+        }
+      ]
+    },
+    {
       "id": "planar_3sat",
       "title": "PLANAR-3SAT",
       "aliases": [
@@ -464,6 +690,21 @@
         {
           "label": "PLANAR-3SAT",
           "url": "https://en.wikipedia.org/wiki/Planar_SAT"
+        }
+      ]
+    },
+    {
+      "id": "quadratic_assignment_decision",
+      "title": "QUADRATIC-ASSIGNMENT (decision)",
+      "aliases": [
+        "Quadratic Assignment (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given flow and distance matrices and bound B, decide whether an assignment of facilities to locations has total cost at most B.",
+      "references": [
+        {
+          "label": "Quadratic assignment problem",
+          "url": "https://en.wikipedia.org/wiki/Quadratic_assignment_problem"
         }
       ]
     },
@@ -514,6 +755,36 @@
       ]
     },
     {
+      "id": "set_splitting",
+      "title": "SET-SPLITTING",
+      "aliases": [
+        "Set Splitting"
+      ],
+      "class": "NP-complete",
+      "statement": "Given universe U and family S of subsets, decide whether U can be partitioned into two parts so every set in S intersects both parts.",
+      "references": [
+        {
+          "label": "Set splitting problem",
+          "url": "https://en.wikipedia.org/wiki/Set_splitting_problem"
+        }
+      ]
+    },
+    {
+      "id": "shortest_common_supersequence_decision",
+      "title": "SHORTEST-COMMON-SUPERSEQUENCE (decision)",
+      "aliases": [
+        "SCS (decision)"
+      ],
+      "class": "NP-complete",
+      "statement": "Given a set of strings and integer L, decide whether there exists a common supersequence of length at most L.",
+      "references": [
+        {
+          "label": "Shortest common supersequence problem",
+          "url": "https://en.wikipedia.org/wiki/Shortest_common_supersequence_problem"
+        }
+      ]
+    },
+    {
       "id": "steiner_tree_decision",
       "title": "STEINER-TREE (decision)",
       "aliases": [
@@ -525,6 +796,21 @@
         {
           "label": "STEINER-TREE (decision)",
           "url": "https://en.wikipedia.org/wiki/Steiner_tree_problem"
+        }
+      ]
+    },
+    {
+      "id": "subgraph_isomorphism",
+      "title": "SUBGRAPH-ISOMORPHISM",
+      "aliases": [
+        "Subgraph Isomorphism"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graphs G and H, decide whether G contains a subgraph isomorphic to H.",
+      "references": [
+        {
+          "label": "Subgraph isomorphism problem",
+          "url": "https://en.wikipedia.org/wiki/Subgraph_isomorphism_problem"
         }
       ]
     },
@@ -555,6 +841,21 @@
         {
           "label": "3-PARTITION",
           "url": "https://en.wikipedia.org/wiki/3-partition_problem"
+        }
+      ]
+    },
+    {
+      "id": "treewidth_decision",
+      "title": "TREEWIDTH (decision)",
+      "aliases": [
+        "Treewidth"
+      ],
+      "class": "NP-complete",
+      "statement": "Given graph G and integer k, decide whether G has treewidth at most k.",
+      "references": [
+        {
+          "label": "Treewidth",
+          "url": "https://en.wikipedia.org/wiki/Treewidth"
         }
       ]
     },
