@@ -15,7 +15,7 @@
 body {
   margin: 0;
   font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #eef4f8 0%, #f9fbfd 100%);
+  background: #ffffff;
   color: var(--ink);
 }
 
@@ -60,22 +60,23 @@ body {
 .layout {
   display: grid;
   grid-template-columns: 360px 1fr;
-  gap: 12px;
-  padding: 12px;
+  gap: 0;
+  padding: 0;
   min-height: calc(100vh - 64px);
 }
 
 .left-panel,
 .graph-panel {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 14px;
 }
 
 .graph-panel {
   position: relative;
   overflow: hidden;
+  border-left: 1px solid var(--line);
 }
 
 .graph-toolbar {
@@ -100,6 +101,18 @@ body {
 h2 {
   margin: 0 0 10px;
   font-size: 16px;
+}
+
+.left-panel > h2 {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.left-panel > h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .filters label {
@@ -144,8 +157,12 @@ h2 {
   width: 100%;
   height: 100%;
   min-height: 680px;
-  border-radius: 8px;
-  background: #fbfdff;
+  border-radius: 0;
+  background-color: #fdfcf8;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(40, 52, 66, 0.06) 1px, transparent 0),
+    linear-gradient(0deg, rgba(34, 51, 68, 0.04), rgba(34, 51, 68, 0.04));
+  background-size: 14px 14px, 100% 100%;
   cursor: grab;
   user-select: none;
 }
@@ -154,30 +171,54 @@ h2 {
   cursor: grabbing;
 }
 
+#graphSvg.dragging-node {
+  cursor: grabbing;
+}
+
 .node-block {
   cursor: pointer;
-  stroke: #213140;
-  stroke-width: 1;
-  transition: stroke-width 150ms ease, stroke 150ms ease, opacity 150ms ease;
+  stroke: #15344c;
+  stroke-width: 1.35;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 2px rgba(17, 30, 45, 0.22));
+  transition: stroke-width 150ms ease, stroke 150ms ease, opacity 150ms ease, transform 150ms ease;
+}
+
+.node-block.critical-node {
+  stroke: #8a5a00;
+  stroke-width: 2.6;
 }
 
 .node-title {
-  font-size: 10px;
-  font-weight: 600;
-  fill: #102030;
+  font-size: 11px;
+  font-weight: 700;
+  fill: #10263b;
+  font-family: "Avenir Next", "Trebuchet MS", "Verdana", sans-serif;
+  letter-spacing: 0.15px;
   pointer-events: none;
   transition: opacity 150ms ease;
 }
 
+.node-inner {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1;
+  pointer-events: none;
+}
+
 .edge {
-  stroke: #a2b1bf;
-  stroke-width: 1.2;
-  opacity: 0.8;
+  stroke: #86a6c4;
+  stroke-width: 1.9;
+  opacity: 0.86;
   cursor: pointer;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 160ms ease, stroke-width 160ms ease, stroke 160ms ease;
 }
 
 .edge.path-edge {
-  stroke: #1f78b4;
+  stroke: #1f6cab;
   stroke-width: 2.8;
   opacity: 1;
 }
@@ -228,9 +269,54 @@ h2 {
   padding-left: 18px;
 }
 
+.critical-list {
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.critical-list .critical-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 6px 0;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdf8;
+  cursor: pointer;
+  color: #213140;
+}
+
+.critical-list .critical-item:hover {
+  border-color: #e6c98a;
+}
+
+.critical-list .critical-score {
+  color: #7a5b1a;
+  font-weight: 700;
+}
+
+#miniMap {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 220px;
+  height: 140px;
+  border: 1px solid #cfd9e3;
+  border-radius: 0;
+  background: #f8fbfe;
+  z-index: 4;
+}
+
 @media (max-width: 1100px) {
   .layout {
     grid-template-columns: 1fr;
+  }
+
+  .graph-panel {
+    border-left: 0;
+    border-top: 1px solid var(--line);
   }
 
   #graphSvg {

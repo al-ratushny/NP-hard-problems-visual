@@ -5,11 +5,9 @@
 ## Project Idea
 This is an interactive visualization of NP-complete problems and reductions between them.
 The goal is simple: keep the graph in one place so it is easy to see how problems connect.
-
 The project is static: data is stored in JSON, with no database and no API.
 
-Any contribution is welcome.
-This project may contain inaccuracies or mistakes; any corrections are welcome.
+This project may contain inaccuracies or mistakes. Any corrections and contributions are welcome.
 
 ## What You Can Do in UI
 - Browse the full reduction graph as labeled problem blocks.
