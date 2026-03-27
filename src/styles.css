@@ -34,29 +34,6 @@ body {
   font-size: 20px;
 }
 
-.site-logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.search-wrap {
-  min-width: 300px;
-}
-
-.search-left {
-  min-width: 0;
-  margin-bottom: 14px;
-}
-
-.search-wrap input {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
 .layout {
   display: grid;
   grid-template-columns: 360px 1fr;
@@ -103,36 +80,40 @@ h2 {
   color: var(--muted);
 }
 
-.path-controls {
+.task-list {
   display: grid;
-  gap: 8px;
-}
-
-.path-controls select,
-.path-controls button {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-.path-controls button {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.path-controls button.secondary {
-  background: #5e6b78;
-}
-
-.path-result {
-  margin-top: 10px;
+  gap: 2px;
+  max-height: 320px;
   margin-bottom: 14px;
+  padding-right: 4px;
+  overflow: auto;
+}
+
+.task-list-item {
+  width: 100%;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
   font-size: 13px;
+  transition: color 150ms ease;
+}
+
+.task-list-item:hover {
+  color: #0f5f8f;
+}
+
+.task-list-item.is-active {
+  color: var(--selected);
+  font-weight: 600;
+}
+
+.task-list-empty {
+  margin: 0;
   color: var(--muted);
-  white-space: pre-wrap;
+  font-size: 13px;
 }
 
 #graphSvg {
@@ -147,9 +128,17 @@ h2 {
 .node-block {
   cursor: pointer;
   stroke: #15344c;
-  stroke-width: 1.35;
-  stroke-linejoin: round;
+  stroke-width: 1.6;
   transition: stroke-width 150ms ease, stroke 150ms ease, opacity 150ms ease, transform 150ms ease;
+}
+
+.node-hit-area {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.node-dot {
+  filter: drop-shadow(0 1px 2px rgba(16, 38, 59, 0.2));
 }
 
 .node-block.critical-node {
@@ -157,26 +146,19 @@ h2 {
   stroke-width: 2.6;
 }
 
-.node-block.path-node {
-  stroke: #000000;
-  stroke-width: 2.2;
-}
-
 .node-title {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   fill: #10263b;
   font-family: "Avenir Next", "Trebuchet MS", "Verdana", sans-serif;
   letter-spacing: 0.15px;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.94);
+  stroke-width: 3px;
+  stroke-linejoin: round;
   transition: opacity 150ms ease;
-}
-
-.node-inner {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.55);
-  stroke-width: 1;
-  pointer-events: none;
 }
 
 .edge {
@@ -188,12 +170,6 @@ h2 {
   stroke-linecap: round;
   stroke-linejoin: round;
   transition: opacity 160ms ease, stroke-width 160ms ease, stroke 160ms ease;
-}
-
-.edge.path-edge {
-  stroke: #000000;
-  stroke-width: 2.8;
-  opacity: 1;
 }
 
 .edge.selected-edge {

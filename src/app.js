@@ -4,20 +4,19 @@ const state = {
   taskById: new Map(),
   reductionById: new Map(),
   outgoing: new Map(),
+  incoming: new Map(),
   adjacency: new Map(),
   visibleTaskIds: new Set(),
   selectedTaskId: null,
   selectedReductionId: null,
-  pathReductionIds: new Set(),
-  pathTaskIds: new Set(),
   viewport: {
     scale: 1,
     baseWidth: 0,
     baseHeight: 0,
   },
-  query: "",
-  sourceId: "",
-  targetId: "",
+  lastLayout: {
+    positions: new Map(),
+  },
   layoutCache: {
     key: "",
     value: null,
@@ -32,18 +31,17 @@ const colorByClass = {
 };
 
 const VIEW_W = 1200;
-const NODE_W = 182;
-const NODE_H = 56;
-const NODE_LINE_HEIGHT = 13;
+const NODE_RADIUS = 7;
+const NODE_LABEL_GAP = 12;
+const NODE_TEXT_MAX_CHARS = 28;
+const NODE_MIN_WIDTH = 112;
+const NODE_MAX_WIDTH = 176;
+const NODE_FILL = "#111111";
 
 const svg = document.getElementById("graphSvg");
+const graphPanel = document.querySelector(".graph-panel");
 const detailsPanel = document.getElementById("detailsPanel");
-const searchInput = document.getElementById("searchInput");
-const sourceSelect = document.getElementById("sourceSelect");
-const targetSelect = document.getElementById("targetSelect");
-const findPathBtn = document.getElementById("findPathBtn");
-const clearPathBtn = document.getElementById("clearPathBtn");
-const pathResult = document.getElementById("pathResult");
+const taskList = document.getElementById("taskList");
 const VIEWPORT_GROUP_ID = "viewport-root";
 
 function qsHash() {
@@ -52,21 +50,15 @@ function qsHash() {
 
 function setHash() {
   const p = new URLSearchParams();
-  if (state.query) p.set("q", state.query);
   if (state.selectedTaskId) p.set("node", state.selectedTaskId);
   if (state.selectedReductionId) p.set("edge", state.selectedReductionId);
-  if (state.sourceId) p.set("src", state.sourceId);
-  if (state.targetId) p.set("dst", state.targetId);
   window.location.hash = p.toString();
 }
 
 function loadHash() {
   const p = qsHash();
-  state.query = p.get("q") || "";
   state.selectedTaskId = p.get("node") || null;
   state.selectedReductionId = p.get("edge") || null;
-  state.sourceId = p.get("src") || "";
-  state.targetId = p.get("dst") || "";
   state.viewport.scale = 1;
 }
 
@@ -82,19 +74,26 @@ function byIdMap(items) {
   return new Map(items.map((x) => [x.id, x]));
 }
 
-function matchTask(task, query) {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  const haystack = [task.id, task.title, ...(task.aliases || [])].join(" ").toLowerCase();
-  return haystack.includes(q);
-}
-
 function recalcVisible() {
   state.visibleTaskIds = new Set(state.tasks.map((task) => task.id));
 }
 
 function taskYear(task) {
   return Number.isFinite(task.year) ? task.year : 0;
+}
+
+function truncateLabel(text, maxChars = NODE_TEXT_MAX_CHARS) {
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, Math.max(0, maxChars - 1)).trimEnd()}\u2026`;
+}
+
+function estimateNodeWidth(task) {
+  const label = truncateLabel(task?.title || "");
+  const estimatedLabelWidth = Math.max(48, label.length * 7.2);
+  return Math.max(
+    NODE_MIN_WIDTH,
+    Math.min(NODE_MAX_WIDTH, estimatedLabelWidth + NODE_LABEL_GAP + NODE_RADIUS * 2 + 12),
+  );
 }
 
 function hashString(value) {
@@ -179,18 +178,8 @@ function buildCurvedEdgePath(p1, p2, offset = 0) {
   const dx = p2.x - p1.x;
   const dy = p2.y - p1.y;
   const len = Math.hypot(dx, dy) || 1;
-  const ux = dx / len;
-  const uy = dy / len;
-  const exitPad = (vx, vy) =>
-    Math.min(
-      len / 3,
-      Math.min(
-        (NODE_W / 2) / Math.max(Math.abs(vx), 0.0001),
-        (NODE_H / 2) / Math.max(Math.abs(vy), 0.0001),
-      ),
-    );
-  const startPad = exitPad(ux, uy);
-  const endPad = exitPad(ux, uy) + 2;
+  const startPad = Math.min(len / 3, NODE_RADIUS + 4);
+  const endPad = Math.min(len / 3, NODE_RADIUS + 6);
   const x1 = p1.x + (dx / len) * startPad;
   const y1 = p1.y + (dy / len) * startPad;
   const x2 = p2.x - (dx / len) * endPad;
@@ -198,7 +187,7 @@ function buildCurvedEdgePath(p1, p2, offset = 0) {
 
   const nx = -dy / len;
   const ny = dx / len;
-  const baseCurvature = Math.min(62, 20 + Math.abs(dy) * 0.09);
+  const baseCurvature = Math.min(40, 12 + Math.abs(dy) * 0.05);
   const bend = baseCurvature + offset;
   const cx = (x1 + x2) / 2 + nx * bend;
   const cy = (y1 + y2) / 2 + ny * bend;
@@ -206,74 +195,114 @@ function buildCurvedEdgePath(p1, p2, offset = 0) {
   return { path, x1, y1, x2, y2 };
 }
 
+function compareTasksForTree(a, b) {
+  const yearDiff = taskYear(a) - taskYear(b);
+  if (yearDiff !== 0) return yearDiff;
+  const titleDiff = a.title.localeCompare(b.title);
+  if (titleDiff !== 0) return titleDiff;
+  return a.id.localeCompare(b.id);
+}
+
 function graphLayout(visibleTasks, visibleReductions) {
   if (visibleTasks.length === 0) {
-    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: NODE_H + 36, yearBands: [] };
+    return { positions: new Map(), viewWidth: VIEW_W, viewHeight: NODE_RADIUS * 2 + 36, yearBands: [] };
   }
 
-  const deg = new Map(visibleTasks.map((t) => [t.id, 0]));
+  const visibleTaskMap = new Map(visibleTasks.map((task) => [task.id, task]));
+  const primaryByTarget = new Map();
   for (const red of visibleReductions) {
-    if (!deg.has(red.from) || !deg.has(red.to)) continue;
-    deg.set(red.from, (deg.get(red.from) || 0) + 1);
-    deg.set(red.to, (deg.get(red.to) || 0) + 1);
-  }
-
-  const leftPad = 66;
-  const rightPad = 66;
-  const topPad = 44;
-  const rowGap = 16;
-  const colGap = 26;
-  const yearGap = 92;
-  const maxRows = 14;
-  const rowStep = NODE_H + rowGap;
-  const tasksByYear = new Map();
-  for (const task of visibleTasks) {
-    const year = taskYear(task);
-    if (!tasksByYear.has(year)) tasksByYear.set(year, []);
-    tasksByYear.get(year).push(task);
-  }
-
-  const years = [...tasksByYear.keys()].sort((a, b) => a - b);
-  const maxYearRows = Math.min(
-    maxRows,
-    Math.max(...years.map((year) => tasksByYear.get(year).length)),
-  );
-  const viewHeight = topPad + maxYearRows * rowStep - rowGap;
-  const positions = new Map();
-  const yearBands = [];
-  let xCursor = leftPad;
-
-  for (const year of years) {
-    const tasks = tasksByYear
-      .get(year)
-      .slice()
-      .sort((a, b) => {
-        const da = deg.get(a.id) || 0;
-        const db = deg.get(b.id) || 0;
-        if (da !== db) return db - da;
-        return a.title.localeCompare(b.title);
-      });
-    const yearColumns = Math.ceil(tasks.length / maxRows);
-    const yearWidth = yearColumns * NODE_W + Math.max(0, yearColumns - 1) * colGap;
-    let minX = Infinity;
-    let maxX = -Infinity;
-
-    for (let i = 0; i < tasks.length; i += 1) {
-      const col = Math.floor(i / maxRows);
-      const row = i % maxRows;
-      const x = xCursor + col * (NODE_W + colGap) + NODE_W / 2;
-      const y = topPad + row * rowStep + NODE_H / 2;
-      positions.set(tasks[i].id, { x, y });
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
+    if (!visibleTaskMap.has(red.from) || !visibleTaskMap.has(red.to)) continue;
+    const existing = primaryByTarget.get(red.to);
+    if (!existing || compareParentReductions(red, existing) < 0) {
+      primaryByTarget.set(red.to, red);
     }
-
-    yearBands.push({ year, x: (minX + maxX) / 2, width: maxX - minX + NODE_W });
-    xCursor += yearWidth + yearGap;
   }
 
-  const viewWidth = Math.max(VIEW_W, xCursor - yearGap + rightPad);
-  return { positions, viewWidth, viewHeight, yearBands };
+  const children = new Map(visibleTasks.map((task) => [task.id, []]));
+  for (const red of primaryByTarget.values()) {
+    if (children.has(red.from)) {
+      children.get(red.from).push(red.to);
+    }
+  }
+  for (const childIds of children.values()) {
+    childIds.sort((aId, bId) => compareTasksForTree(visibleTaskMap.get(aId), visibleTaskMap.get(bId)));
+  }
+
+  const sortedTasks = visibleTasks.slice().sort(compareTasksForTree);
+  const roots = sortedTasks.filter((task) => !primaryByTarget.has(task.id));
+  const orderedRoots = roots.slice();
+  for (const task of sortedTasks) {
+    if (!orderedRoots.some((root) => root.id === task.id)) orderedRoots.push(task);
+  }
+
+  const leftPad = 48;
+  const rightPad = 48;
+  const topPad = 36;
+  const bottomPad = 44;
+  const siblingGap = 18;
+  const rootGap = 26;
+  const levelStep = 74;
+  const positions = new Map();
+  const widthCache = new Map();
+  let maxDepth = 0;
+
+  function measureSubtree(taskId, stack = new Set()) {
+    if (widthCache.has(taskId)) return widthCache.get(taskId);
+    if (stack.has(taskId)) return estimateNodeWidth(visibleTaskMap.get(taskId));
+    stack.add(taskId);
+    const childIds = (children.get(taskId) || []).filter((childId) => !stack.has(childId));
+    let width = estimateNodeWidth(visibleTaskMap.get(taskId));
+    if (childIds.length > 0) {
+      const childrenWidth =
+        childIds.reduce((sum, childId) => sum + measureSubtree(childId, stack), 0) +
+        siblingGap * Math.max(0, childIds.length - 1);
+      width = Math.max(width, childrenWidth);
+    }
+    stack.delete(taskId);
+    widthCache.set(taskId, width);
+    return width;
+  }
+
+  function placeSubtree(taskId, depth, left, width, stack = new Set()) {
+    if (positions.has(taskId)) return;
+    const centerX = left + width / 2;
+    const centerY = topPad + depth * levelStep + NODE_RADIUS;
+    positions.set(taskId, { x: centerX, y: centerY });
+    maxDepth = Math.max(maxDepth, depth);
+
+    const nextStack = new Set(stack);
+    nextStack.add(taskId);
+    const childIds = (children.get(taskId) || []).filter((childId) => !nextStack.has(childId));
+    if (childIds.length === 0) return;
+
+    const childWidths = childIds.map((childId) => measureSubtree(childId, nextStack));
+    const totalWidth =
+      childWidths.reduce((sum, childWidth) => sum + childWidth, 0) +
+      siblingGap * Math.max(0, childWidths.length - 1);
+    let cursor = left + (width - totalWidth) / 2;
+
+    childIds.forEach((childId, idx) => {
+      const childWidth = childWidths[idx];
+      placeSubtree(childId, depth + 1, cursor, childWidth, nextStack);
+      cursor += childWidth + siblingGap;
+    });
+  }
+
+  let xCursor = leftPad;
+  for (const root of orderedRoots) {
+    if (positions.has(root.id)) continue;
+    const rootWidth = measureSubtree(root.id);
+    placeSubtree(root.id, 0, xCursor, rootWidth);
+    xCursor += rootWidth + rootGap;
+  }
+
+  const occupiedWidth = Math.max(0, xCursor - rootGap);
+  const viewWidth = Math.max(VIEW_W, occupiedWidth + rightPad);
+  const viewHeight = Math.max(
+    NODE_RADIUS * 2 + topPad + bottomPad,
+    topPad + maxDepth * levelStep + NODE_RADIUS * 2 + bottomPad,
+  );
+  return { positions, viewWidth, viewHeight, yearBands: [] };
 }
 
 function layoutCacheKey(visibleTasks, visibleReductions) {
@@ -326,6 +355,61 @@ function buildHighlightSets() {
   return { nodes, edges, active: false };
 }
 
+function compareParentReductions(a, b) {
+  const yearDiff = taskYear(state.taskById.get(a.from) || {}) - taskYear(state.taskById.get(b.from) || {});
+  if (yearDiff !== 0) return yearDiff;
+  const titleA = state.taskById.get(a.from)?.title || a.from;
+  const titleB = state.taskById.get(b.from)?.title || b.from;
+  const titleDiff = titleA.localeCompare(titleB);
+  if (titleDiff !== 0) return titleDiff;
+  return a.id.localeCompare(b.id);
+}
+
+function pickPrimaryParent(taskId) {
+  const incoming = state.incoming.get(taskId) || [];
+  if (incoming.length === 0) return null;
+  return incoming.slice().sort(compareParentReductions)[0];
+}
+
+function buildVisibleReductions(visibleTaskIds) {
+  const primaryByTarget = new Map();
+  const visibleReductions = [];
+
+  for (const red of state.reductions) {
+    if (!visibleTaskIds.has(red.from) || !visibleTaskIds.has(red.to)) continue;
+    const existing = primaryByTarget.get(red.to);
+    if (!existing || compareParentReductions(red, existing) < 0) {
+      primaryByTarget.set(red.to, red);
+    }
+  }
+
+  for (const red of state.reductions) {
+    if (primaryByTarget.get(red.to)?.id !== red.id) continue;
+    visibleReductions.push(red);
+  }
+
+  const extraIds = new Set();
+  if (state.selectedReductionId) extraIds.add(state.selectedReductionId);
+  for (const redId of extraIds) {
+    if (visibleReductions.some((red) => red.id === redId)) continue;
+    const red = state.reductionById.get(redId);
+    if (!red) continue;
+    if (!visibleTaskIds.has(red.from) || !visibleTaskIds.has(red.to)) continue;
+    visibleReductions.push(red);
+  }
+
+  return visibleReductions;
+}
+
+function taskLabel(taskId) {
+  const task = state.taskById.get(taskId);
+  return task ? `${task.title} (${task.id})` : taskId;
+}
+
+function reductionListItem(red) {
+  return `${escapeHtml(taskLabel(red.from))} -> ${escapeHtml(taskLabel(red.to))}`;
+}
+
 function applyViewportTransform() {
   const g = document.getElementById(VIEWPORT_GROUP_ID);
   if (!g) return;
@@ -335,52 +419,38 @@ function applyViewportTransform() {
   svg.style.height = `${state.viewport.baseHeight * scale}px`;
 }
 
+function focusTaskInGraph(taskId) {
+  const point = state.lastLayout.positions.get(taskId);
+  if (!point || !graphPanel) return;
+
+  const scale = state.viewport.scale;
+  const targetLeft = Math.max(0, point.x * scale - graphPanel.clientWidth / 2);
+  const targetTop = Math.max(0, point.y * scale - graphPanel.clientHeight / 2);
+
+  graphPanel.scrollTo({
+    left: targetLeft,
+    top: targetTop,
+    behavior: "smooth",
+  });
+}
+
 function drawGraph() {
   clearSvg();
   const visibleTasks = state.tasks.filter((t) => state.visibleTaskIds.has(t.id));
   const visibleTaskIds = new Set(visibleTasks.map((t) => t.id));
-  const visibleReductions = state.reductions.filter(
-    (r) => visibleTaskIds.has(r.from) && visibleTaskIds.has(r.to),
-  );
+  const visibleReductions = buildVisibleReductions(visibleTaskIds);
 
   const { positions: basePos, viewWidth, viewHeight, yearBands } = getGraphLayoutCached(
     visibleTasks,
     visibleReductions,
   );
   const pos = new Map(basePos);
+  state.lastLayout = { positions: pos };
   svg.setAttribute("viewBox", `0 0 ${viewWidth} ${viewHeight}`);
   state.viewport.baseWidth = viewWidth;
   state.viewport.baseHeight = viewHeight;
   const highlight = buildHighlightSets();
   const edgeOffsets = buildEdgeBundleOffsets(visibleReductions, pos);
-
-  const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-  svg.appendChild(defs);
-  const nodeGradientByClass = new Map();
-  for (const [klass, base] of Object.entries(colorByClass)) {
-    const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-    const gradId = `node-grad-${klass.replaceAll(/[^a-z0-9_-]/gi, "_")}`;
-    grad.setAttribute("id", gradId);
-    grad.setAttribute("x1", "0%");
-    grad.setAttribute("y1", "0%");
-    grad.setAttribute("x2", "0%");
-    grad.setAttribute("y2", "100%");
-
-    const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-    stop1.setAttribute("offset", "0%");
-    stop1.setAttribute("stop-color", base);
-    stop1.setAttribute("stop-opacity", "1");
-    grad.appendChild(stop1);
-
-    const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-    stop2.setAttribute("offset", "100%");
-    stop2.setAttribute("stop-color", base);
-    stop2.setAttribute("stop-opacity", "1");
-    grad.appendChild(stop2);
-
-    defs.appendChild(grad);
-    nodeGradientByClass.set(klass, gradId);
-  }
 
   const viewportGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
   viewportGroup.setAttribute("id", VIEWPORT_GROUP_ID);
@@ -424,9 +494,7 @@ function drawGraph() {
     const line = document.createElementNS("http://www.w3.org/2000/svg", "path");
     line.setAttribute("d", geometry.path);
     line.classList.add("edge");
-    const isPathEdge = state.pathReductionIds.has(red.id);
     const isSelectedEdge = state.selectedReductionId === red.id;
-    if (isPathEdge) line.classList.add("path-edge");
     if (isSelectedEdge) line.classList.add("selected-edge");
     if (highlight.active) {
       if (highlight.edges.has(red.id)) line.classList.add("edge-highlight");
@@ -434,7 +502,6 @@ function drawGraph() {
     }
     line.addEventListener("click", (event) => {
       event.stopPropagation();
-      clearActivePath();
       state.selectedReductionId = red.id;
       state.selectedTaskId = null;
       renderDetails();
@@ -449,17 +516,19 @@ function drawGraph() {
   for (const task of visibleTasks) {
     const p = pos.get(task.id);
     const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("x", String(p.x - NODE_W / 2));
-    rect.setAttribute("y", String(p.y - NODE_H / 2));
-    rect.setAttribute("width", String(NODE_W));
-    rect.setAttribute("height", String(NODE_H));
-    rect.setAttribute("rx", "8");
-    rect.setAttribute("ry", "8");
-    const nodeGradId = nodeGradientByClass.get(task.class);
-    rect.setAttribute("fill", nodeGradId ? `url(#${nodeGradId})` : colorByClass[task.class] || "#b0beca");
-    rect.classList.add("node-block");
-    if (state.pathTaskIds.has(task.id)) rect.classList.add("path-node");
+    const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    hit.setAttribute("cx", String(p.x));
+    hit.setAttribute("cy", String(p.y));
+    hit.setAttribute("r", "16");
+    hit.classList.add("node-hit-area");
+    group.appendChild(hit);
+
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    rect.setAttribute("cx", String(p.x));
+    rect.setAttribute("cy", String(p.y));
+    rect.setAttribute("r", String(NODE_RADIUS));
+    rect.setAttribute("fill", NODE_FILL);
+    rect.classList.add("node-block", "node-dot");
     if (state.selectedTaskId === task.id) rect.classList.add("selected-node");
     if (highlight.active) {
       if (highlight.nodes.has(task.id)) rect.classList.add("node-highlight");
@@ -467,37 +536,18 @@ function drawGraph() {
     }
     group.appendChild(rect);
 
-    const inner = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    inner.setAttribute("x", String(p.x - NODE_W / 2 + 1.5));
-    inner.setAttribute("y", String(p.y - NODE_H / 2 + 1.5));
-    inner.setAttribute("width", String(NODE_W - 3));
-    inner.setAttribute("height", String(NODE_H - 3));
-    inner.setAttribute("rx", "7");
-    inner.setAttribute("ry", "7");
-    inner.classList.add("node-inner");
-    group.appendChild(inner);
-
     const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
     title.classList.add("node-title");
-    title.setAttribute("x", String(p.x));
-    title.setAttribute("text-anchor", "middle");
-    const lines = splitTitleLines(task.title);
-    if (task.title.length > 22) title.style.fontSize = "10px";
-    const startY = p.y - ((lines.length - 1) * NODE_LINE_HEIGHT) / 2 + 4;
-    title.setAttribute("y", String(startY));
+    title.setAttribute("x", String(p.x + NODE_RADIUS + NODE_LABEL_GAP));
+    title.setAttribute("y", String(p.y));
+    title.setAttribute("text-anchor", "start");
+    title.setAttribute("dominant-baseline", "middle");
     if (highlight.active && !highlight.nodes.has(task.id)) title.style.opacity = "0.32";
-    lines.forEach((line, idx) => {
-      const tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-      tspan.setAttribute("x", String(p.x));
-      if (idx > 0) tspan.setAttribute("dy", String(NODE_LINE_HEIGHT));
-      tspan.textContent = line;
-      title.appendChild(tspan);
-    });
+    title.textContent = truncateLabel(task.title);
     group.appendChild(title);
 
     group.addEventListener("click", (event) => {
       event.stopPropagation();
-      clearActivePath();
       state.selectedTaskId = task.id;
       state.selectedReductionId = null;
       renderDetails();
@@ -519,17 +569,50 @@ function drawGraph() {
   applyViewportTransform();
 }
 
+function renderTaskList() {
+  const filteredTasks = state.tasks
+    .slice()
+    .sort(compareTasksForTree);
+
+  if (filteredTasks.length === 0) {
+    taskList.innerHTML = '<p class="task-list-empty">No vertices found.</p>';
+    return;
+  }
+
+  taskList.innerHTML = filteredTasks
+    .map((task) => {
+      const activeClass = state.selectedTaskId === task.id ? " is-active" : "";
+      return `
+        <button class="task-list-item${activeClass}" data-task-id="${escapeHtml(task.id)}" type="button">
+          ${escapeHtml(task.title)}
+        </button>
+      `;
+    })
+    .join("");
+}
+
 function renderDetails() {
+  renderTaskList();
+
   if (state.selectedTaskId) {
     const task = state.taskById.get(state.selectedTaskId);
     if (!task) return;
-    const related = state.reductions.filter((r) => r.from === task.id || r.to === task.id);
+    const incoming = state.incoming.get(task.id) || [];
+    const primaryParent = pickPrimaryParent(task.id);
+    const extraParents = incoming
+      .filter((red) => red.id !== primaryParent?.id)
+      .slice()
+      .sort(compareParentReductions);
+    const outgoing = state.outgoing.get(task.id) || [];
     const references = task.references
       .map((r) => `<li><a href="${escapeHtml(r.url)}" target="_blank">${escapeHtml(r.label)}</a></li>`)
       .join("");
-    const relatedRows = related
+    const extraParentRows = extraParents
+      .map((r) => `<li>${reductionListItem(r)}</li>`)
+      .join("");
+    const outgoingRows = outgoing
       .slice(0, 12)
-      .map((r) => `<li>${escapeHtml(r.from)} -> ${escapeHtml(r.to)}</li>`)
+      .map((r) => `<li>${reductionListItem(r)}</li>`)
       .join("");
     detailsPanel.innerHTML = `
       <h3>${escapeHtml(task.title)}</h3>
@@ -537,8 +620,12 @@ function renderDetails() {
       <p>${escapeHtml(task.statement)}</p>
       <strong>References</strong>
       <ul>${references}</ul>
-      <strong>Related Reductions (${related.length})</strong>
-      <ul>${relatedRows || "<li>None</li>"}</ul>
+      <strong>Parent In Graph</strong>
+      <ul>${primaryParent ? `<li>${reductionListItem(primaryParent)}</li>` : "<li>None</li>"}</ul>
+      <strong>Hidden Parents</strong>
+      <ul>${extraParentRows || "<li>None</li>"}</ul>
+      <strong>Outgoing Reductions (${outgoing.length})</strong>
+      <ul>${outgoingRows || "<li>None</li>"}</ul>
     `;
     return;
   }
@@ -562,121 +649,18 @@ function renderDetails() {
   detailsPanel.innerHTML = "<p>Select a node or edge.</p>";
 }
 
-function fillTaskSelect(selectEl, selectedId) {
-  const opts = [`<option value="">-- select --</option>`];
-  for (const task of state.tasks) {
-    const selected = task.id === selectedId ? "selected" : "";
-    opts.push(`<option value="${escapeHtml(task.id)}" ${selected}>${escapeHtml(task.title)}</option>`);
-  }
-  selectEl.innerHTML = opts.join("");
-}
-
-function bfsPath(sourceId, targetId) {
-  if (!sourceId || !targetId || sourceId === targetId) return [];
-
-  const queue = [sourceId];
-  const seen = new Set([sourceId]);
-  const prevNode = new Map();
-  const prevEdge = new Map();
-
-  while (queue.length > 0) {
-    const cur = queue.shift();
-    if (cur === targetId) break;
-    for (const edge of state.outgoing.get(cur) || []) {
-      const nxt = edge.to;
-      if (seen.has(nxt)) continue;
-      seen.add(nxt);
-      prevNode.set(nxt, cur);
-      prevEdge.set(nxt, edge.id);
-      queue.push(nxt);
-    }
-  }
-
-  if (!seen.has(targetId)) return [];
-  const path = [];
-  let cur = targetId;
-  while (cur !== sourceId) {
-    const edgeId = prevEdge.get(cur);
-    path.push(edgeId);
-    cur = prevNode.get(cur);
-  }
-  path.reverse();
-  return path;
-}
-
-function renderPath(pathEdges) {
-  if (pathEdges.length === 0) {
-    pathResult.textContent = "No path found.";
-    return;
-  }
-  const rows = pathEdges.map((id, i) => {
-    const r = state.reductionById.get(id);
-    return `${i + 1}. ${r.from} -> ${r.to} (${r.id})`;
-  });
-  pathResult.textContent = rows.join("\n");
-}
-
-function pathTaskIdsFromEdges(pathEdges, sourceId) {
-  if (!sourceId || pathEdges.length === 0) return new Set();
-  const ids = new Set([sourceId]);
-  for (const edgeId of pathEdges) {
-    const red = state.reductionById.get(edgeId);
-    if (!red) continue;
-    ids.add(red.from);
-    ids.add(red.to);
-  }
-  return ids;
-}
-
-function clearActivePath(resetSelectors = true) {
-  state.pathReductionIds = new Set();
-  state.pathTaskIds = new Set();
-  pathResult.textContent = "";
-  if (resetSelectors) {
-    state.sourceId = "";
-    state.targetId = "";
-    sourceSelect.value = "";
-    targetSelect.value = "";
-  }
-}
-
 function wireEvents() {
-  let searchTimer = null;
-  searchInput.addEventListener("input", () => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-      state.query = searchInput.value.trim();
-      const hit = state.tasks.find((task) => matchTask(task, state.query));
-      state.selectedTaskId = hit ? hit.id : null;
-      state.selectedReductionId = null;
-      renderDetails();
-      drawGraph();
-      setHash();
-    }, 160);
-  });
-
-  sourceSelect.addEventListener("change", () => {
-    state.sourceId = sourceSelect.value;
-    setHash();
-  });
-  targetSelect.addEventListener("change", () => {
-    state.targetId = targetSelect.value;
-    setHash();
-  });
-
-  findPathBtn.addEventListener("click", () => {
-    const path = bfsPath(state.sourceId, state.targetId);
-    state.pathReductionIds = new Set(path);
-    state.pathTaskIds = pathTaskIdsFromEdges(path, state.sourceId);
-    renderPath(path);
+  taskList.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("[data-task-id]") : null;
+    if (!target) return;
+    const taskId = target.getAttribute("data-task-id");
+    if (!taskId) return;
+    state.selectedTaskId = taskId;
+    state.selectedReductionId = null;
+    renderDetails();
     drawGraph();
     setHash();
-  });
-
-  clearPathBtn.addEventListener("click", () => {
-    clearActivePath();
-    drawGraph();
-    setHash();
+    requestAnimationFrame(() => focusTaskInGraph(taskId));
   });
 
   svg.addEventListener("click", () => {
@@ -701,10 +685,14 @@ async function loadData() {
   state.taskById = byIdMap(state.tasks);
   state.reductionById = byIdMap(state.reductions);
   state.outgoing = new Map(state.tasks.map((t) => [t.id, []]));
+  state.incoming = new Map(state.tasks.map((t) => [t.id, []]));
   state.adjacency = new Map(state.tasks.map((t) => [t.id, new Set()]));
   for (const r of state.reductions) {
     if (state.outgoing.has(r.from)) {
       state.outgoing.get(r.from).push(r);
+    }
+    if (state.incoming.has(r.to)) {
+      state.incoming.get(r.to).push(r);
     }
     if (state.adjacency.has(r.from) && state.adjacency.has(r.to)) {
       state.adjacency.get(r.from).add(r.to);
@@ -713,33 +701,13 @@ async function loadData() {
   }
 }
 
-function hydrateInitialControls() {
-  searchInput.value = state.query;
-  fillTaskSelect(sourceSelect, state.sourceId);
-  fillTaskSelect(targetSelect, state.targetId);
-}
-
 async function main() {
   loadHash();
   await loadData();
   wireEvents();
-  hydrateInitialControls();
   recalcVisible();
-  if (state.query) {
-    const hit = state.tasks.find((task) => matchTask(task, state.query));
-    state.selectedTaskId = hit ? hit.id : state.selectedTaskId;
-    state.selectedReductionId = hit ? null : state.selectedReductionId;
-  }
   drawGraph();
   renderDetails();
-
-  if (state.sourceId && state.targetId) {
-    const path = bfsPath(state.sourceId, state.targetId);
-    state.pathReductionIds = new Set(path);
-    state.pathTaskIds = pathTaskIdsFromEdges(path, state.sourceId);
-    renderPath(path);
-    drawGraph();
-  }
 }
 
 main().catch((err) => {

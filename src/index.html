@@ -8,31 +8,13 @@
   </head>
   <body>
     <header class="topbar">
-      <img src="../assets/logo.svg" alt="NP Visualizer logo" class="site-logo" />
       <h1>NP-Completeness Visualizer</h1>
     </header>
 
     <main class="layout">
       <section class="left-panel">
-        <h2>Search</h2>
-        <div class="search-wrap search-left">
-          <input id="searchInput" type="text" placeholder="Search by id, title, alias..." />
-        </div>
-
-        <h2>Path Explorer</h2>
-        <div class="path-controls">
-          <label>
-            Source
-            <select id="sourceSelect"></select>
-          </label>
-          <label>
-            Target
-            <select id="targetSelect"></select>
-          </label>
-          <button id="findPathBtn">Find Path</button>
-          <button id="clearPathBtn" class="secondary">Clear Path</button>
-        </div>
-        <div id="pathResult" class="path-result"></div>
+        <h2>Vertices</h2>
+        <div id="taskList" class="task-list"></div>
 
         <h2>Details</h2>
         <div id="detailsPanel" class="details-panel">
