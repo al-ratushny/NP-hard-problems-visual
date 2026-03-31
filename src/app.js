@@ -145,12 +145,12 @@ function splitTitleLines(title, maxChars = 16, maxLines = 2) {
 }
 
 function edgeBucketKey(p1, p2) {
-  const y1 = Math.round(p1.y / 120);
-  const y2 = Math.round(p2.y / 120);
-  const xBand = Math.round((p1.x + p2.x) / 220);
-  const minY = Math.min(y1, y2);
-  const maxY = Math.max(y1, y2);
-  return `${minY}:${maxY}:${xBand}`;
+  const x1 = Math.round(p1.x / 120);
+  const x2 = Math.round(p2.x / 120);
+  const yBand = Math.round((p1.y + p2.y) / 220);
+  const minX = Math.min(x1, x2);
+  const maxX = Math.max(x1, x2);
+  return `${minX}:${maxX}:${yBand}`;
 }
 
 function buildEdgeBundleOffsets(visibleReductions, pos) {
@@ -235,38 +235,38 @@ function graphLayout(visibleTasks, visibleReductions) {
     if (!orderedRoots.some((root) => root.id === task.id)) orderedRoots.push(task);
   }
 
-  const leftPad = 48;
-  const rightPad = 48;
-  const topPad = 36;
-  const bottomPad = 44;
+  const leftPad = 44;
+  const rightPad = 220;
+  const topPad = 28;
+  const bottomPad = 36;
   const siblingGap = 18;
   const rootGap = 26;
-  const levelStep = 74;
+  const levelStep = 210;
   const positions = new Map();
-  const widthCache = new Map();
+  const heightCache = new Map();
   let maxDepth = 0;
 
-  function measureSubtree(taskId, stack = new Set()) {
-    if (widthCache.has(taskId)) return widthCache.get(taskId);
-    if (stack.has(taskId)) return estimateNodeWidth(visibleTaskMap.get(taskId));
+  function measureSubtreeHeight(taskId, stack = new Set()) {
+    if (heightCache.has(taskId)) return heightCache.get(taskId);
+    if (stack.has(taskId)) return NODE_RADIUS * 2 + 20;
     stack.add(taskId);
     const childIds = (children.get(taskId) || []).filter((childId) => !stack.has(childId));
-    let width = estimateNodeWidth(visibleTaskMap.get(taskId));
+    let height = NODE_RADIUS * 2 + 20;
     if (childIds.length > 0) {
-      const childrenWidth =
-        childIds.reduce((sum, childId) => sum + measureSubtree(childId, stack), 0) +
+      const childrenHeight =
+        childIds.reduce((sum, childId) => sum + measureSubtreeHeight(childId, stack), 0) +
         siblingGap * Math.max(0, childIds.length - 1);
-      width = Math.max(width, childrenWidth);
+      height = Math.max(height, childrenHeight);
     }
     stack.delete(taskId);
-    widthCache.set(taskId, width);
-    return width;
+    heightCache.set(taskId, height);
+    return height;
   }
 
-  function placeSubtree(taskId, depth, left, width, stack = new Set()) {
+  function placeSubtree(taskId, depth, top, height, stack = new Set()) {
     if (positions.has(taskId)) return;
-    const centerX = left + width / 2;
-    const centerY = topPad + depth * levelStep + NODE_RADIUS;
+    const centerX = leftPad + depth * levelStep + NODE_RADIUS;
+    const centerY = top + height / 2;
     positions.set(taskId, { x: centerX, y: centerY });
     maxDepth = Math.max(maxDepth, depth);
 
@@ -275,33 +275,30 @@ function graphLayout(visibleTasks, visibleReductions) {
     const childIds = (children.get(taskId) || []).filter((childId) => !nextStack.has(childId));
     if (childIds.length === 0) return;
 
-    const childWidths = childIds.map((childId) => measureSubtree(childId, nextStack));
-    const totalWidth =
-      childWidths.reduce((sum, childWidth) => sum + childWidth, 0) +
-      siblingGap * Math.max(0, childWidths.length - 1);
-    let cursor = left + (width - totalWidth) / 2;
+    const childHeights = childIds.map((childId) => measureSubtreeHeight(childId, nextStack));
+    const totalHeight =
+      childHeights.reduce((sum, childHeight) => sum + childHeight, 0) +
+      siblingGap * Math.max(0, childHeights.length - 1);
+    let cursor = top + (height - totalHeight) / 2;
 
     childIds.forEach((childId, idx) => {
-      const childWidth = childWidths[idx];
-      placeSubtree(childId, depth + 1, cursor, childWidth, nextStack);
-      cursor += childWidth + siblingGap;
+      const childHeight = childHeights[idx];
+      placeSubtree(childId, depth + 1, cursor, childHeight, nextStack);
+      cursor += childHeight + siblingGap;
     });
   }
 
-  let xCursor = leftPad;
+  let yCursor = topPad;
   for (const root of orderedRoots) {
     if (positions.has(root.id)) continue;
-    const rootWidth = measureSubtree(root.id);
-    placeSubtree(root.id, 0, xCursor, rootWidth);
-    xCursor += rootWidth + rootGap;
+    const rootHeight = measureSubtreeHeight(root.id);
+    placeSubtree(root.id, 0, yCursor, rootHeight);
+    yCursor += rootHeight + rootGap;
   }
 
-  const occupiedWidth = Math.max(0, xCursor - rootGap);
-  const viewWidth = Math.max(VIEW_W, occupiedWidth + rightPad);
-  const viewHeight = Math.max(
-    NODE_RADIUS * 2 + topPad + bottomPad,
-    topPad + maxDepth * levelStep + NODE_RADIUS * 2 + bottomPad,
-  );
+  const occupiedHeight = Math.max(0, yCursor - rootGap);
+  const viewWidth = Math.max(VIEW_W, leftPad + maxDepth * levelStep + NODE_RADIUS * 2 + rightPad);
+  const viewHeight = Math.max(NODE_RADIUS * 2 + topPad + bottomPad, occupiedHeight + bottomPad);
   return { positions, viewWidth, viewHeight, yearBands: [] };
 }
 

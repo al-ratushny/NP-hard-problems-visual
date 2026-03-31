@@ -9,14 +9,6 @@ The project is static: data is stored in JSON, with no database and no API.
 
 This project may contain inaccuracies or mistakes. Any corrections and contributions are welcome.
 
-## What You Can Do in UI
-- Browse the full reduction graph as labeled problem blocks.
-- Click a node to see problem statement, references, and related reductions.
-- Click an edge to see reduction details and sources.
-- Use path explorer (`source -> target`) to find a reduction chain.
-- Use zoom controls (`+`, `-`, `Reset`) and mouse drag to pan the graph.
-- Use search to quickly jump to a task by id, title, or alias.
-
 ## Project Structure
 - `src/` — frontend app:
   - `index.html` — page layout and controls.
@@ -43,7 +35,7 @@ Each task contains:
 - `aliases` (optional names)
 - `class` (`P`, `NP`, `NP-complete`, `NP-hard`)
 - `statement`
-- `references` (at least one source link)
+- `references`
 
 ### Reduction
 Each reduction contains:
@@ -58,6 +50,19 @@ To add a new task/reduction:
 1. Edit JSON in `data/tasks/tasks.json` and/or `data/reductions/reductions.json`.
 2. Keep naming and references consistent.
 3. Run validation before opening a PR.
+
+## How to Run Locally
+This project is static, so any simple HTTP server is enough.
+
+Example:
+```bash
+python3 -m http.server 8000
+```
+
+Then open:
+```text
+http://127.0.0.1:8000/src/
+```
 
 ## How to Run Validation
 Main script:
